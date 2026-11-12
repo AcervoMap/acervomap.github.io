@@ -1,3 +1,38 @@
+// Função universal para carregar camadas WFS dinamicamente por BBOX (em partes)
+function criarFonteWFS_BBOX(nomeCamadaGeoServer) {
+    var format = new ol.format.GeoJSON();
+    return new ol.source.Vector({
+        format: format,
+        loader: function (extent, resolution, projection) {
+            var projExtent = ol.proj.transformExtent(extent, projection, 'EPSG:4326');
+            var url = 'https://geoserver-sigweb.duckdns.org/geoserver/wfs?' +
+                'service=WFS&version=1.1.0&request=GetFeature' +
+                '&typename=' + encodeURIComponent(nomeCamadaGeoServer) +
+                '&outputFormat=application/json' +
+                '&srsname=EPSG:4326' +
+                '&bbox=' + projExtent.join(',') + ',EPSG:4326';
+
+            fetch(url)
+                .then(function (res) {
+                    if (!res.ok) throw new Error("Erro WFS: " + res.status);
+                    return res.json();
+                })
+                .then(function (data) {
+                    var features = format.readFeatures(data, {
+                        dataProjection: 'EPSG:4326',
+                        featureProjection: projection
+                    });
+                    this.addFeatures(features);
+                }.bind(this))
+                .catch(function (err) {
+                    console.error("Erro ao carregar " + nomeCamadaGeoServer + ":", err);
+                });
+        },
+        strategy: ol.loadingstrategy.bbox
+    });
+}
+
+
 var wms_layers = [];
 
 
@@ -46,7 +81,7 @@ var lyr_Municipioscomaltopotencialenergticosolar_3 = new ol.layer.Vector({
                 interactive: true,
                 title: '<img src="styles/legend/Municipioscomaltopotencialenergticosolar_3.png" /> Municipios com alto potencial energético solar'
             });
-
+lyr_Municipioscomaltopotencialenergticosolar_3.set('mgbMetadataUuid', '1ab78ba8-0b77-444f-81d4-0f8ee80f0cf9');
 fetchWFSMunicipioscomaltopotencialenergticosolar_3Data(lyr_Municipioscomaltopotencialenergticosolar_3.get('title'), function (error, response) {
     var features_Municipioscomaltopotencialenergticosolar_3;
     try {
@@ -99,6 +134,7 @@ var lyr_PotencialEnergticoSolar_4 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/potencial solar-20261111T151254Z-1-001/potencial solar/potencial_energetico_solar.pdf',
                             title: 'Potencial Energético Solar<br />\
                                     <img src="styles/legend/PotencialEnergticoSolar_5_0.png" /> 0,00<br />\
                                     <img src="styles/legend/PotencialEnergticoSolar_5_1.png" /> 0,49<br />\
@@ -106,10 +142,10 @@ var lyr_PotencialEnergticoSolar_4 = new ol.layer.Tile({
                             popuplayertitle: 'Potencial Energético Solar',
                             type: '',
                             opacity: 1.000000,
-                            
-                            
                           });
-              wms_layers.push([lyr_PotencialEnergticoSolar_4, 0]);
+wms_layers.push([lyr_PotencialEnergticoSolar_4, 0]);
+lyr_PotencialEnergticoSolar_4.set('mgbMetadataUuid', '34c9b6eb-028f-4388-874a-12259febf924');
+
 var lyr_reaoptasaimplantaodeenergiasolar_5 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -119,6 +155,7 @@ var lyr_reaoptasaimplantaodeenergiasolar_5 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/potencial solar-20261111T151254Z-1-001/potencial solar/areas_aptas_energia_solar.pdf',
                             title: 'Áreas aptas a implantação de energia solar<br />\
                             <img src="styles/legend/reasaptasaimplantaodeenergiasolar_4_1.png" /> Áreas aptas<br />',
                             popuplayertitle: 'Área optas a implantação de energia solar',
@@ -127,7 +164,10 @@ var lyr_reaoptasaimplantaodeenergiasolar_5 = new ol.layer.Tile({
                             
                             
                           });
-              wms_layers.push([lyr_reaoptasaimplantaodeenergiasolar_5, 0]);
+wms_layers.push([lyr_reaoptasaimplantaodeenergiasolar_5, 0]);
+lyr_reaoptasaimplantaodeenergiasolar_5.set('mgbMetadataUuid', '7cf25bb0-4a14-4fea-8d42-2ecdd09fe0fd');
+
+
 var lyr_Restrioporcorpohdrico_6 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -137,6 +177,7 @@ var lyr_Restrioporcorpohdrico_6 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/mapas de restrição-20261111T151253Z-1-001/mapas de restrição/restricao_corpo_hidrico.pdf',
                             title: 'Restrição por corpo hídrico<br />\
                                     <img src="styles/legend/Restrioporcorpohdrico_6_0.png" /> Área restrita (corpo hídrico)<br />\
                                     <img src="styles/legend/Restrioporcorpohdrico_6_1.png" /> Área apta<br />',
@@ -147,6 +188,8 @@ var lyr_Restrioporcorpohdrico_6 = new ol.layer.Tile({
                             
                           });
               wms_layers.push([lyr_Restrioporcorpohdrico_6, 0]);
+lyr_Restrioporcorpohdrico_6.set('mgbMetadataUuid', 'caf5b779-8e51-4854-94da-2ac63f833337');
+
 var lyr_Restrioporreadeconservao_7 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -156,6 +199,7 @@ var lyr_Restrioporreadeconservao_7 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/mapas de restrição-20261111T151253Z-1-001/mapas de restrição/restricao_area_conservacao.pdf',
                             title: 'Restrição por área de conservação<br />\
                                     <img src="styles/legend/Restrioporreadeconservao_7_0.png" /> Área restrita (unidade de conservação)<br />\
                                     <img src="styles/legend/Restrioporreadeconservao_7_1.png" /> Área apta<br />',
@@ -163,9 +207,10 @@ var lyr_Restrioporreadeconservao_7 = new ol.layer.Tile({
                             type: '',
                             opacity: 1.000000,
                             
-                            
                           });
               wms_layers.push([lyr_Restrioporreadeconservao_7, 0]);
+lyr_Restrioporreadeconservao_7.set('mgbMetadataUuid', '99017d35-5f10-4746-9324-1e124e557e48');
+
 var lyr_Restrioporvegetaonatural_8 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -175,6 +220,7 @@ var lyr_Restrioporvegetaonatural_8 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/mapas de restrição-20261111T151253Z-1-001/mapas de restrição/restricao_vegetacao_natural.pdf',
                             title: 'Restrição por vegetação natural<br />\
                             <img src="styles/legend/Restrioporvegetaonatural_8_0.png" /> Área restrita (vegetação natural)<br />\
                             <img src="styles/legend/Restrioporvegetaonatural_8_1.png" /> Área apta<br />',
@@ -182,9 +228,10 @@ var lyr_Restrioporvegetaonatural_8 = new ol.layer.Tile({
                             type: '',
                             opacity: 1.000000,
                             
-                            
                           });
               wms_layers.push([lyr_Restrioporvegetaonatural_8, 0]);
+lyr_Restrioporvegetaonatural_8.set('mgbMetadataUuid', '50811cc6-e830-48d5-9f2b-de57f1f2faec');
+              
 var lyr_Restriopordeclividade_9 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -194,6 +241,7 @@ var lyr_Restriopordeclividade_9 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/mapas de restrição-20261111T151253Z-1-001/mapas de restrição/restricao_declividade.pdf',
                             title: 'Restrição por declividade<br />\
                                     <img src="styles/legend/Restriopordeclividade_9_0.png" /> Área restrita (>8°)<br />\
                                     <img src="styles/legend/Restriopordeclividade_9_1.png" /> Área apta (< 8°)<br />',
@@ -204,6 +252,8 @@ var lyr_Restriopordeclividade_9 = new ol.layer.Tile({
                             
                           });
               wms_layers.push([lyr_Restriopordeclividade_9, 0]);
+lyr_Restriopordeclividade_9.set('mgbMetadataUuid', '18e335c7-057e-423d-b00d-a5c22ba61d67');
+
 var lyr_Restrioreaurbana_10 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -213,6 +263,7 @@ var lyr_Restrioreaurbana_10 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/mapas de restrição-20261111T151253Z-1-001/mapas de restrição/restricao_area_urbana.pdf',
                             title: 'Restrição por área urbana<br />\
                             <img src="styles/legend/Restrioporreaurbana_10_0.png" /> Área restrita (área urbana)<br />\
                             <img src="styles/legend/Restrioporreaurbana_10_1.png" /> Área apta<br />',
@@ -223,17 +274,20 @@ var lyr_Restrioreaurbana_10 = new ol.layer.Tile({
                             
                           });
               wms_layers.push([lyr_Restrioreaurbana_10, 0]);
+lyr_Restrioreaurbana_10.set('mgbMetadataUuid', 'd82e8614-0d01-4e1f-8d5d-5b92c9d5ccc6');
+
 var format_Linhadetransmissoplanejado_11 = new ol.format.GeoJSON();
 var jsonSource_Linhadetransmissoplanejado_11 = new ol.source.Vector({
     attributions: ' ',
 });
-var lyr_Linhadetransmissoplanejado_11 = new ol.layer.Vector({ //simbologia cor VERMELHA
+var lyr_Linhadetransmissoplanejado_11 = new ol.layer.Vector({
                 declutter: false,
                 source:jsonSource_Linhadetransmissoplanejado_11, 
                 style: style_Linhadetransmissoplanejado_11,
                 popuplayertitle: 'Linha de transmissão planejado',
                 interactive: true,
-                title: '<img src="styles/legend/Linhadetransmissaoexistente_14.png" /> Linha de Transmissao planejado'
+                metadadoUrl: 'metadado/linha_transmissao_planejada_atualizado.pdf',
+                title: '<img src="styles/legend/Linhadetransmissoplanejado_11.png" /> Linha de transmissão planejado'
             });
 
 fetchWFSLinhadetransmissoplanejado_11Data(lyr_Linhadetransmissoplanejado_11.get('title'), function (error, response) {
@@ -279,6 +333,8 @@ fetchWFSLinhadetransmissoplanejado_11Data(lyr_Linhadetransmissoplanejado_11.get(
         console.error("Error parsing WFS for Linhadetransmissoplanejado_11:", e);
     }
 });
+lyr_Linhadetransmissoplanejado_11.set('mgbMetadataUuid', 'f2ab-4afb-9f4a-9be0a1fc9abb');
+
 var format_SubestaesExpansoPlanejada_12 = new ol.format.GeoJSON();
 var jsonSource_SubestaesExpansoPlanejada_12 = new ol.source.Vector({
     attributions: ' ',
@@ -289,6 +345,7 @@ var lyr_SubestaesExpansoPlanejada_12 = new ol.layer.Vector({
                 style: style_SubestaesExpansoPlanejada_12,
                 popuplayertitle: 'Subestações Expansão Planejada',
                 interactive: true,
+                metadadoUrl: 'metadado/subestacao_expensao_planejada_atualizado.pdf',
                 title: '<img src="styles/legend/SubestaesExpansoPlanejada_12.png" /> Subestações Expansão Planejada'
             });
 
@@ -335,6 +392,7 @@ fetchWFSSubestaesExpansoPlanejada_12Data(lyr_SubestaesExpansoPlanejada_12.get('t
         console.error("Error parsing WFS for SubestaesExpansoPlanejada_12:", e);
     }
 });
+lyr_SubestaesExpansoPlanejada_12.set('mgbMetadataUuid', '35836788-6bfd-4fbb-9c76-96dfba7c0a71');
 var format_SubestaesBaseExistente_13 = new ol.format.GeoJSON();
 var jsonSource_SubestaesBaseExistente_13 = new ol.source.Vector({
     attributions: ' ',
@@ -345,6 +403,7 @@ var lyr_SubestaesBaseExistente_13 = new ol.layer.Vector({
                 style: style_SubestaesBaseExistente_13,
                 popuplayertitle: 'Subestações Base Existente',
                 interactive: true,
+                metadadoUrl: 'metadado/subestacao_base_existente_atualizado.pdf',
                 title: '<img src="styles/legend/SubestaesBaseExistente_13.png" /> Subestações Base Existente'
             });
 
@@ -391,16 +450,19 @@ fetchWFSSubestaesBaseExistente_13Data(lyr_SubestaesBaseExistente_13.get('title')
         console.error("Error parsing WFS for SubestaesBaseExistente_13:", e);
     }
 });
+lyr_SubestaesBaseExistente_13.set('mgbMetadataUuid', 'b294fa13-dae6-4e40-b056-2604aff52a72');
+
 var format_Linhadetransmissaoexistente_14 = new ol.format.GeoJSON();
 var jsonSource_Linhadetransmissaoexistente_14 = new ol.source.Vector({
     attributions: ' ',
 });
-var lyr_Linhadetransmissaoexistente_14 = new ol.layer.Vector({ // simbologia cor AMARELA
+var lyr_Linhadetransmissaoexistente_14 = new ol.layer.Vector({
                 declutter: false,
                 source:jsonSource_Linhadetransmissaoexistente_14, 
                 style: style_Linhadetransmissaoexistente_14,
                 popuplayertitle: 'Linha de transmissao existente',
                 interactive: true,
+                metadadoUrl: 'metadado/linha_transmissao_existente_atualizado.pdf',
                 title: '<span style="display:inline-block; width:18px; height:3px; background-color: rgb(255, 215, 0); vertical-align: middle; margin-right: 6px; border-radius: 1px;"></span> Linha de Transmissão Existente',
             });
 
@@ -447,6 +509,8 @@ fetchWFSLinhadetransmissaoexistente_14Data(lyr_Linhadetransmissaoexistente_14.ge
         console.error("Error parsing WFS for Linhadetransmissaoexistente_14:", e);
     }
 });
+lyr_Linhadetransmissaoexistente_14.set('mgbMetadataUuid', 'ff073e08-74a4-4c40-a147-5e5ae7d09cab');
+
 var format_usinas_foto_editado_15 = new ol.format.GeoJSON();
 var features_usinas_foto_editado_15 = format_usinas_foto_editado_15.readFeatures(json_usinas_foto_editado_15, 
             {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
@@ -460,177 +524,83 @@ var lyr_usinas_foto_editado_15 = new ol.layer.Vector({
                 style: style_usinas_foto_editado_15,
                 popuplayertitle: 'Usinas Fotovotaicas',
                 interactive: true,
+                metadadoUrl: 'metadado/usinas_fotovotaicas_atualizado.pdf',
                 title: '<img src="styles/legend/usinas_foto_editado_15.png" /> Usinas Fotovotaicas'
             });
-var format_CadastroAmbientalRuralCAR_16 = new ol.format.GeoJSON();
-var jsonSource_CadastroAmbientalRuralCAR_16 = new ol.source.Vector({
-    attributions: ' ',
+lyr_usinas_foto_editado_15.set('mgbMetadataUuid', '9f008251-8f9b-4508-b692-90d9a315e047');
+
+
+var lyr_CadastroAmbientalRuralCAR_16 = new ol.layer.Tile({ // Alterado de Image para Tile
+    metadadoUrl: 'metadado/car_atualizado.pdf',
+    title: '<img src="styles/legend/CadastroAmbientalRuralCAR_16.png" /> Cadastro Ambiental Rural (CAR)',
+    minZoom: 10, 
+    opacity: 1.0,
+    visible: false, 
+    popuplayertitle: 'Cadastro Ambiental Rural (CAR)',
+    source: new ol.source.TileWMS({ // Alterado de ImageWMS para TileWMS
+        url: 'https://geoserver-sigweb.duckdns.org/geoserver/wms',
+        params: {
+            'LAYERS': 'sigweb:car_piaui_completo', 
+            'TILED': true, // Parâmetro obrigatório para TileWMS
+            'FORMAT': 'image/png',
+            'TRANSPARENT': false
+        },
+        serverType: 'geoserver',
+        crossOrigin: 'anonymous'
+    })
 });
-var lyr_CadastroAmbientalRuralCAR_16 = new ol.layer.Vector({
-                declutter: false,
-                source:jsonSource_CadastroAmbientalRuralCAR_16, 
-                style: style_CadastroAmbientalRuralCAR_16,
-                popuplayertitle: 'Cadastro Ambiental Rural (CAR)',
-                interactive: true,
-                title: '<img src="styles/legend/CadastroAmbientalRuralCAR_16.png" /> Cadastro Ambiental Rural (CAR)'
-            });
 
-fetchWFSCadastroAmbientalRuralCAR_16Data(lyr_CadastroAmbientalRuralCAR_16.get('title'), function (error, response) {
-    var features_CadastroAmbientalRuralCAR_16;
-    try {
-        if (typeof response === "object" && !response.nodeType) {
-            // Case JSONP/GeoJSON
-            features_CadastroAmbientalRuralCAR_16 = format_CadastroAmbientalRuralCAR_16.readFeatures(response);
-        } else {
-            // Case XML string o DOM
-            var parser = new DOMParser();
-            var xmlDoc = (typeof response === "string")
-                ? parser.parseFromString(response, "text/xml")
-                : response;
+wms_layers.push([lyr_CadastroAmbientalRuralCAR_16, 1]);
+lyr_CadastroAmbientalRuralCAR_16.set('mgbMetadataUuid', '9be16538-26c8-4a22-93e4-58bc7d98f944');
 
-            // Find GML version from tags
-            var gmlFormat;
-            if (xmlDoc.getElementsByTagName("gml:featureMember").length > 0) {
-                // GML2
-                gmlFormat = new ol.format.GML2();
-            } else if (xmlDoc.getElementsByTagName("gml:featureMembers").length > 0 ||
-                    xmlDoc.getElementsByTagName("gml:FeatureCollection").length > 0) {
-                // GML3
-                gmlFormat = new ol.format.GML3();
-            } else {
-                // Fallback generico
-                gmlFormat = new ol.format.WFS();
-            }
 
-            features_CadastroAmbientalRuralCAR_16 = gmlFormat.readFeatures(xmlDoc, {
-                dataProjection: 'EPSG:3857',
-                featureProjection: map.getView().getProjection()
-            });
-        }
-
-        if (features_CadastroAmbientalRuralCAR_16 && features_CadastroAmbientalRuralCAR_16.length > 0) {
-            jsonSource_CadastroAmbientalRuralCAR_16.addFeatures(features_CadastroAmbientalRuralCAR_16);
-        } else {
-            lyr_CadastroAmbientalRuralCAR_16.set('title', '<i class="fa-regular fa-triangle-exclamation" title="Parsing Error"></i> ' + lyr_CadastroAmbientalRuralCAR_16.get('title'));
-            console.warn("No features loaded for CadastroAmbientalRuralCAR_16");
-        }
-    } catch (e) {
-        console.error("Error parsing WFS for CadastroAmbientalRuralCAR_16:", e);
-    }
+var lyr_SistemadeGestoFundiriaSIGEF_17 = new ol.layer.Image({
+    metadadoUrl: 'metadado/SIGEF.pdf',
+    title: '<img src="styles/legend/SistemadeGestoFundiriaSIGEF_17.png" /> Sistema de Gestão Fundiária (SIGEF)',
+    opacity: 1.0,
+    visible: false, // Pode alterar para true se quiser que inicie ligada
+    popuplayertitle: 'Sistema de Gestão Fundiária (SIGEF)',
+    source: new ol.source.ImageWMS({
+        url: 'https://geoserver-sigweb.duckdns.org/geoserver/wms',
+        params: {
+            'LAYERS': 'sigweb:sigef_piaui_completo', 
+            'FORMAT': 'image/png',
+            'TRANSPARENT': true
+        },
+        serverType: 'geoserver',
+        crossOrigin: 'anonymous'
+    })
 });
-var format_SistemadeGestoFundiriaSIGEF_17 = new ol.format.GeoJSON();
-var jsonSource_SistemadeGestoFundiriaSIGEF_17 = new ol.source.Vector({
-    attributions: ' ',
-});
-var lyr_SistemadeGestoFundiriaSIGEF_17 = new ol.layer.Vector({
-                declutter: false,
-                source:jsonSource_SistemadeGestoFundiriaSIGEF_17, 
-                style: style_SistemadeGestoFundiriaSIGEF_17,
-                popuplayertitle: 'Sistema de Gestão Fundiária (SIGEF)',
-                interactive: true,
-                title: '<img src="styles/legend/SistemadeGestoFundiriaSIGEF_17.png" /> Sistema de Gestão Fundiária (SIGEF)'
-            });
 
-fetchWFSSistemadeGestoFundiriaSIGEF_17Data(lyr_SistemadeGestoFundiriaSIGEF_17.get('title'), function (error, response) {
-    var features_SistemadeGestoFundiriaSIGEF_17;
-    try {
-        if (typeof response === "object" && !response.nodeType) {
-            // Case JSONP/GeoJSON
-            features_SistemadeGestoFundiriaSIGEF_17 = format_SistemadeGestoFundiriaSIGEF_17.readFeatures(response);
-        } else {
-            // Case XML string o DOM
-            var parser = new DOMParser();
-            var xmlDoc = (typeof response === "string")
-                ? parser.parseFromString(response, "text/xml")
-                : response;
 
-            // Find GML version from tags
-            var gmlFormat;
-            if (xmlDoc.getElementsByTagName("gml:featureMember").length > 0) {
-                // GML2
-                gmlFormat = new ol.format.GML2();
-            } else if (xmlDoc.getElementsByTagName("gml:featureMembers").length > 0 ||
-                    xmlDoc.getElementsByTagName("gml:FeatureCollection").length > 0) {
-                // GML3
-                gmlFormat = new ol.format.GML3();
-            } else {
-                // Fallback generico
-                gmlFormat = new ol.format.WFS();
-            }
+wms_layers.push([lyr_SistemadeGestoFundiriaSIGEF_17, 1]);
 
-            features_SistemadeGestoFundiriaSIGEF_17 = gmlFormat.readFeatures(xmlDoc, {
-                dataProjection: 'EPSG:3857',
-                featureProjection: map.getView().getProjection()
-            });
-        }
+lyr_SistemadeGestoFundiriaSIGEF_17.set('mgbMetadataUuid', '1c01784b-ed77-4350-9722-e7ebbb3ecb23');
 
-        if (features_SistemadeGestoFundiriaSIGEF_17 && features_SistemadeGestoFundiriaSIGEF_17.length > 0) {
-            jsonSource_SistemadeGestoFundiriaSIGEF_17.addFeatures(features_SistemadeGestoFundiriaSIGEF_17);
-        } else {
-            lyr_SistemadeGestoFundiriaSIGEF_17.set('title', '<i class="fa-regular fa-triangle-exclamation" title="Parsing Error"></i> ' + lyr_SistemadeGestoFundiriaSIGEF_17.get('title'));
-            console.warn("No features loaded for SistemadeGestoFundiriaSIGEF_17");
-        }
-    } catch (e) {
-        console.error("Error parsing WFS for SistemadeGestoFundiriaSIGEF_17:", e);
-    }
-});
-var format_BiomasMAPBIOMAS_18 = new ol.format.GeoJSON();
-var jsonSource_BiomasMAPBIOMAS_18 = new ol.source.Vector({
-    attributions: ' ',
-});
-var lyr_BiomasMAPBIOMAS_18 = new ol.layer.Vector({
-                declutter: false,
-                source:jsonSource_BiomasMAPBIOMAS_18, 
-                style: style_BiomasMAPBIOMAS_18,
-                popuplayertitle: 'Biomas (MAPBIOMAS)',
-                interactive: true,
+var lyr_BiomasMAPBIOMAS_18 = new ol.layer.Tile({
     title: 'Biomas (MAPBIOMAS)<br />\
     <img src="styles/legend/BiomasMAPBIOMAS_18_0.png" /> Caatinga<br />\
-    <img src="styles/legend/BiomasMAPBIOMAS_18_1.png" /> Cerrado<br />' });
-
-fetchWFSBiomasMAPBIOMAS_18Data(lyr_BiomasMAPBIOMAS_18.get('title'), function (error, response) {
-    var features_BiomasMAPBIOMAS_18;
-    try {
-        if (typeof response === "object" && !response.nodeType) {
-            // Case JSONP/GeoJSON
-            features_BiomasMAPBIOMAS_18 = format_BiomasMAPBIOMAS_18.readFeatures(response);
-        } else {
-            // Case XML string o DOM
-            var parser = new DOMParser();
-            var xmlDoc = (typeof response === "string")
-                ? parser.parseFromString(response, "text/xml")
-                : response;
-
-            // Find GML version from tags
-            var gmlFormat;
-            if (xmlDoc.getElementsByTagName("gml:featureMember").length > 0) {
-                // GML2
-                gmlFormat = new ol.format.GML2();
-            } else if (xmlDoc.getElementsByTagName("gml:featureMembers").length > 0 ||
-                    xmlDoc.getElementsByTagName("gml:FeatureCollection").length > 0) {
-                // GML3
-                gmlFormat = new ol.format.GML3();
-            } else {
-                // Fallback generico
-                gmlFormat = new ol.format.WFS();
-            }
-
-            features_BiomasMAPBIOMAS_18 = gmlFormat.readFeatures(xmlDoc, {
-                dataProjection: 'EPSG:3857',
-                featureProjection: map.getView().getProjection()
-            });
-        }
-
-        if (features_BiomasMAPBIOMAS_18 && features_BiomasMAPBIOMAS_18.length > 0) {
-            jsonSource_BiomasMAPBIOMAS_18.addFeatures(features_BiomasMAPBIOMAS_18);
-        } else {
-            lyr_BiomasMAPBIOMAS_18.set('title', '<i class="fa-regular fa-triangle-exclamation" title="Parsing Error"></i> ' + lyr_BiomasMAPBIOMAS_18.get('title'));
-            console.warn("No features loaded for BiomasMAPBIOMAS_18");
-        }
-    } catch (e) {
-        console.error("Error parsing WFS for BiomasMAPBIOMAS_18:", e);
-    }
+    <img src="styles/legend/BiomasMAPBIOMAS_18_1.png" /> Cerrado<br />',
+    opacity: 1.0,
+    visible: true,
+    popuplayertitle: 'Biomas (MAPBIOMAS)',
+    source: new ol.source.TileWMS({
+        url: 'https://geoserver-sigweb.duckdns.org/geoserver/wms',
+        params: {
+            'LAYERS': 'sigweb:Biomas_mapbiomas',
+            'TILED': true,
+            'FORMAT': 'image/png',
+            'TRANSPARENT': true
+        },
+        serverType: 'geoserver',
+        crossOrigin: 'anonymous'
+    })
 });
+
+// Registra a camada para clique e pop-up WMS
+wms_layers.push([lyr_BiomasMAPBIOMAS_18, 1]);
+lyr_BiomasMAPBIOMAS_18.set('mgbMetadataUuid', 'a3dba0ee-6f27-4ba0-8bb8-6bafcdbf54b5');
+
 var lyr_UsoeocupaodoSolo_19 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -640,6 +610,7 @@ var lyr_UsoeocupaodoSolo_19 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/uso e cobertura do solo (1).pdf',
                             title: 'Uso e cobertura do solo (MapBiomas)<br />\
                                     <img src="styles/legend/UsoecoberturadosoloMapBiomas_19_0.png" /> Formação Florestal<br />\
                                     <img src="styles/legend/UsoecoberturadosoloMapBiomas_19_1.png" /> Formação Savânica<br />\
@@ -677,6 +648,8 @@ var lyr_UsoeocupaodoSolo_19 = new ol.layer.Tile({
                             
                           });
               wms_layers.push([lyr_UsoeocupaodoSolo_19, 0]);
+lyr_UsoeocupaodoSolo_19.set('mgbMetadataUuid', 'fd3cc530-4c7b-4dc2-aab9-38fa97f5aad3');
+
 var format_reasdeconservaoICMBio_20 = new ol.format.GeoJSON();
 var jsonSource_reasdeconservaoICMBio_20 = new ol.source.Vector({
     attributions: ' ',
@@ -743,6 +716,8 @@ fetchWFSreasdeconservaoICMBio_20Data(lyr_reasdeconservaoICMBio_20.get('title'), 
         console.error("Error parsing WFS for reasdeconservaoICMBio_20:", e);
     }
 });
+lyr_reasdeconservaoICMBio_20.set('mgbMetadataUuid', '8b1acc0a-6ca3-4f8d-ac0b-8d1b5a913803');
+
 var lyr_DeclividadeSRTM_21 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -766,16 +741,21 @@ var lyr_DeclividadeSRTM_21 = new ol.layer.Tile({
                             
                           });
               wms_layers.push([lyr_DeclividadeSRTM_21, 0]);
+lyr_DeclividadeSRTM_21.set('mgbMetadataUuid', '66c45d11-fb15-498c-a21b-aa408794cb7c');
+              
 var format_RedeHidrogrficaANA_22 = new ol.format.GeoJSON();
 var jsonSource_RedeHidrogrficaANA_22 = new ol.source.Vector({
     attributions: ' ',
 });
+
+
 var lyr_RedeHidrogrficaANA_22 = new ol.layer.Vector({
                 declutter: false,
                 source:jsonSource_RedeHidrogrficaANA_22, 
                 style: style_RedeHidrogrficaANA_22,
                 popuplayertitle: 'Rede Hidrográfica (ANA)',
                 interactive: true,
+                metadadoUrl: 'metadado/rede_hidrografica.pdf',
                 title: '<img src="styles/legend/RedeHidrogrficaANA_22.png" /> Rede Hidrográfica (ANA)'
             });
 
@@ -822,6 +802,9 @@ fetchWFSRedeHidrogrficaANA_22Data(lyr_RedeHidrogrficaANA_22.get('title'), functi
         console.error("Error parsing WFS for RedeHidrogrficaANA_22:", e);
     }
 });
+
+lyr_RedeHidrogrficaANA_22.set('mgbMetadataUuid', '90e92d95-b4f9-45e8-8426-8f2789343326');
+
 var lyr_Precipitaoacumulada2025CHIRPS_23 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -831,6 +814,7 @@ var lyr_Precipitaoacumulada2025CHIRPS_23 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/clima-20261111T183036Z-1-001/clima/precipitacao_media.pdf',
                             title: 'Precipitação acumulada 2025 (CHIRPS)<br />\
                                     <img src="styles/legend/Precipitaoacumulada2025CHIRPS_23_0.png" /> 300<br />\
                                     <img src="styles/legend/Precipitaoacumulada2025CHIRPS_23_1.png" /> 476<br />\
@@ -848,6 +832,8 @@ var lyr_Precipitaoacumulada2025CHIRPS_23 = new ol.layer.Tile({
                             
                           });
               wms_layers.push([lyr_Precipitaoacumulada2025CHIRPS_23, 0]);
+lyr_Precipitaoacumulada2025CHIRPS_23.set('mgbMetadataUuid', '4a8447a3-84d8-4c9e-831e-444792a79dc3');
+
 var lyr_IrradiaoSolarDiriaINPE_24 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -857,6 +843,7 @@ var lyr_IrradiaoSolarDiriaINPE_24 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/clima-20261111T183036Z-1-001/clima/irradiacao_solar.pdf',
                             title: 'Irradiação Solar Diária (INPE)<br />\
                             <img src="styles/legend/IrradiaoSolarDiriaINPE_24_0.png" /> 0,0049<br />\
                             <img src="styles/legend/IrradiaoSolarDiriaINPE_24_1.png" /> 0,1343<br />\
@@ -874,6 +861,8 @@ var lyr_IrradiaoSolarDiriaINPE_24 = new ol.layer.Tile({
                             
                           });
               wms_layers.push([lyr_IrradiaoSolarDiriaINPE_24, 0]);
+lyr_IrradiaoSolarDiriaINPE_24.set('mgbMetadataUuid', '19910bd3-c66f-44b5-8326-1bf3fa3666f0');
+
 var lyr_Albedomdiaanual2025MODIS_25 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -883,6 +872,7 @@ var lyr_Albedomdiaanual2025MODIS_25 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/clima-20261111T183036Z-1-001/clima/albedo.pdf',
                             title: 'Albedo média anual 2025 (MODIS)<br />\
     <img src="styles/legend/Albedomdiaanual2025MODIS_25_0.png" /> -0,1398<br />\
     <img src="styles/legend/Albedomdiaanual2025MODIS_25_1.png" /> 0,1453<br />\
@@ -896,6 +886,8 @@ var lyr_Albedomdiaanual2025MODIS_25 = new ol.layer.Tile({
                             
                           });
               wms_layers.push([lyr_Albedomdiaanual2025MODIS_25, 0]);
+lyr_Albedomdiaanual2025MODIS_25.set('mgbMetadataUuid', 'e71fbdb6-7a08-4448-bca6-403f3b0649a3');
+
 var lyr_TemperaturaMdiaanual2025_26 = new ol.layer.Tile({
                             source: new ol.source.TileWMS(({
                               url: "https://geoserver-sigweb.duckdns.org/geoserver/wms",
@@ -905,6 +897,7 @@ var lyr_TemperaturaMdiaanual2025_26 = new ol.layer.Tile({
                                 "TILED": "true",
                                 "VERSION": "1.3.0"},
                             })),
+                            metadadoUrl: 'metadado/clima-20261111T183036Z-1-001/clima/temperatura_media.pdf',
                             title: 'Temperatura Média Anual 2025 (ERA5)<br />\
                                     <img src="styles/legend/TemperaturaMdiaAnual2025ERA5_26_0.png" /> 24<br />\
                                     <img src="styles/legend/TemperaturaMdiaAnual2025ERA5_26_1.png" /> 25<br />\
@@ -920,174 +913,113 @@ var lyr_TemperaturaMdiaanual2025_26 = new ol.layer.Tile({
                             
                           });
               wms_layers.push([lyr_TemperaturaMdiaanual2025_26, 0]);
+lyr_TemperaturaMdiaanual2025_26.set('mgbMetadataUuid', '0735f716-1c7a-4117-bd5c-0c7c6e22bae8');
+
 var format_Piau_27 = new ol.format.GeoJSON();
 var jsonSource_Piau_27 = new ol.source.Vector({
     attributions: ' ',
 });
 var lyr_Piau_27 = new ol.layer.Vector({
-                declutter: false,
-                source:jsonSource_Piau_27, 
-                style: style_Piau_27,
-                popuplayertitle: 'Piauí',
-                interactive: false,
-                title: '<img src="styles/legend/Piau_27.png" /> Piauí'
-            });
+    declutter: false,
+    source: jsonSource_Piau_27,
+    style: style_Piau_27,
+    popuplayertitle: 'Piauí',
+    interactive: false,
+    metadadoUrl: 'metadado/limites-20261111T151350Z-1-001/limites/Piaui.pdf',
+    title: '<img src="styles/legend/Piau_27.png" /> Piauí'
+});
 
 fetchWFSPiau_27Data(lyr_Piau_27.get('title'), function (error, response) {
-    var features_Piau_27;
+    if (error) {
+        console.error("Erro ao carregar WFS Piauí:", error);
+        return;
+    }
+
     try {
-        if (typeof response === "object" && !response.nodeType) {
-            // Case JSONP/GeoJSON
-            features_Piau_27 = format_Piau_27.readFeatures(response);
-        } else {
-            // Case XML string o DOM
-            var parser = new DOMParser();
-            var xmlDoc = (typeof response === "string")
-                ? parser.parseFromString(response, "text/xml")
-                : response;
-
-            // Find GML version from tags
-            var gmlFormat;
-            if (xmlDoc.getElementsByTagName("gml:featureMember").length > 0) {
-                // GML2
-                gmlFormat = new ol.format.GML2();
-            } else if (xmlDoc.getElementsByTagName("gml:featureMembers").length > 0 ||
-                    xmlDoc.getElementsByTagName("gml:FeatureCollection").length > 0) {
-                // GML3
-                gmlFormat = new ol.format.GML3();
-            } else {
-                // Fallback generico
-                gmlFormat = new ol.format.WFS();
-            }
-
-            features_Piau_27 = gmlFormat.readFeatures(xmlDoc, {
-                dataProjection: 'EPSG:3857',
-                featureProjection: map.getView().getProjection()
-            });
+        if (typeof response === "string" && response.trim().startsWith("<")) {
+            console.error("GeoServer ou AllOrigins devolveu XML/HTML em vez de JSON para Piau_27:", response.substring(0, 300));
+            return;
         }
+
+        var geojsonData = (typeof response === "string") ? JSON.parse(response) : response;
+
+        var features_Piau_27 = format_Piau_27.readFeatures(geojsonData, {
+            dataProjection: 'EPSG:4326',
+            featureProjection: map.getView().getProjection()
+        });
 
         if (features_Piau_27 && features_Piau_27.length > 0) {
             jsonSource_Piau_27.addFeatures(features_Piau_27);
+            console.log("Sucesso! Feições carregadas para Piauí:", features_Piau_27.length);
         } else {
-            lyr_Piau_27.set('title', '<i class="fa-regular fa-triangle-exclamation" title="Parsing Error"></i> ' + lyr_Piau_27.get('title'));
-            console.warn("No features loaded for Piau_27");
+            console.warn("Nenhuma feição encontrada no GeoJSON de Piau_27.");
         }
     } catch (e) {
-        console.error("Error parsing WFS for Piau_27:", e);
+        console.error("Erro no processamento do GeoJSON para Piau_27:", e);
     }
+}); 
+lyr_Piau_27.set('mgbMetadataUuid', '20fb3bbe-7081-4f0e-b271-ca4b6d8758e8');
+
+var lyr_MunicpiosPiau_28 = new ol.layer.Tile({
+    metadadoUrl: 'metadado/limites-20261111T151350Z-1-001/limites/Municipios_PI.pdf',
+    title: '<img src="styles/legend/MunicpiosPiau_28.png" /> Municípios do Piauí',
+    opacity: 1.0,
+    visible: true,
+    popuplayertitle: 'Municípios do Piauí',
+    source: new ol.source.TileWMS({
+        url: 'https://geoserver-sigweb.duckdns.org/geoserver/wms',
+        params: { 'LAYERS': 'sigweb:Municipios_do_Piaui', 'TILED': true, 'FORMAT': 'image/png' },
+        serverType: 'geoserver'
+    })
 });
-var format_MunicpiosPiau_28 = new ol.format.GeoJSON();
-var jsonSource_MunicpiosPiau_28 = new ol.source.Vector({
-    attributions: ' ',
-});
-var lyr_MunicpiosPiau_28 = new ol.layer.Vector({
-                declutter: false,
-                source:jsonSource_MunicpiosPiau_28, 
-                style: style_MunicpiosPiau_28,
-                popuplayertitle: 'Municípios Piauí',
-                interactive: true,
-                title: '<img src="styles/legend/MunicpiosPiau_28.png" /> Municípios Piauí'
-            });
+wms_layers.push([lyr_MunicpiosPiau_28, 1]);
+lyr_MunicpiosPiau_28.set('mgbMetadataUuid', '4ca710ee-cd09-4939-acf5-96e89786867b');
 
-fetchWFSMunicpiosPiau_28Data(lyr_MunicpiosPiau_28.get('title'), function (error, response) {
-    var features_MunicpiosPiau_28;
-    try {
-        if (typeof response === "object" && !response.nodeType) {
-            // Case JSONP/GeoJSON
-            features_MunicpiosPiau_28 = format_MunicpiosPiau_28.readFeatures(response);
-        } else {
-            // Case XML string o DOM
-            var parser = new DOMParser();
-            var xmlDoc = (typeof response === "string")
-                ? parser.parseFromString(response, "text/xml")
-                : response;
-
-            // Find GML version from tags
-            var gmlFormat;
-            if (xmlDoc.getElementsByTagName("gml:featureMember").length > 0) {
-                // GML2
-                gmlFormat = new ol.format.GML2();
-            } else if (xmlDoc.getElementsByTagName("gml:featureMembers").length > 0 ||
-                    xmlDoc.getElementsByTagName("gml:FeatureCollection").length > 0) {
-                // GML3
-                gmlFormat = new ol.format.GML3();
-            } else {
-                // Fallback generico
-                gmlFormat = new ol.format.WFS();
-            }
-
-            features_MunicpiosPiau_28 = gmlFormat.readFeatures(xmlDoc, {
-                dataProjection: 'EPSG:3857',
-                featureProjection: map.getView().getProjection()
-            });
-        }
-
-        if (features_MunicpiosPiau_28 && features_MunicpiosPiau_28.length > 0) {
-            jsonSource_MunicpiosPiau_28.addFeatures(features_MunicpiosPiau_28);
-        } else {
-            lyr_MunicpiosPiau_28.set('title', '<i class="fa-regular fa-triangle-exclamation" title="Parsing Error"></i> ' + lyr_MunicpiosPiau_28.get('title'));
-            console.warn("No features loaded for MunicpiosPiau_28");
-        }
-    } catch (e) {
-        console.error("Error parsing WFS for MunicpiosPiau_28:", e);
-    }
-});
 var format_Brasil_29 = new ol.format.GeoJSON();
 var jsonSource_Brasil_29 = new ol.source.Vector({
     attributions: ' ',
 });
 var lyr_Brasil_29 = new ol.layer.Vector({
-                declutter: false,
-                source:jsonSource_Brasil_29, 
-                style: style_Brasil_29,
-                popuplayertitle: 'Brasil',
-                interactive: false,
-                title: '<img src="styles/legend/Brasil_29.png" /> Brasil'
-            });
+    declutter: false,
+    source: jsonSource_Brasil_29,
+    style: style_Brasil_29,
+    popuplayertitle: 'Brasil',
+    interactive: false,
+    metadadoUrl: 'metadado/limites-20261111T151350Z-1-001/limites/Brasil.pdf',
+    title: '<img src="styles/legend/Brasil_29.png" /> Brasil'
+});
 
 fetchWFSBrasil_29Data(lyr_Brasil_29.get('title'), function (error, response) {
-    var features_Brasil_29;
+    if (error) {
+        console.error("Erro ao carregar WFS Brasil:", error);
+        return;
+    }
+
     try {
-        if (typeof response === "object" && !response.nodeType) {
-            // Case JSONP/GeoJSON
-            features_Brasil_29 = format_Brasil_29.readFeatures(response);
-        } else {
-            // Case XML string o DOM
-            var parser = new DOMParser();
-            var xmlDoc = (typeof response === "string")
-                ? parser.parseFromString(response, "text/xml")
-                : response;
-
-            // Find GML version from tags
-            var gmlFormat;
-            if (xmlDoc.getElementsByTagName("gml:featureMember").length > 0) {
-                // GML2
-                gmlFormat = new ol.format.GML2();
-            } else if (xmlDoc.getElementsByTagName("gml:featureMembers").length > 0 ||
-                    xmlDoc.getElementsByTagName("gml:FeatureCollection").length > 0) {
-                // GML3
-                gmlFormat = new ol.format.GML3();
-            } else {
-                // Fallback generico
-                gmlFormat = new ol.format.WFS();
-            }
-
-            features_Brasil_29 = gmlFormat.readFeatures(xmlDoc, {
-                dataProjection: 'EPSG:3857',
-                featureProjection: map.getView().getProjection()
-            });
+        if (typeof response === "string" && response.trim().startsWith("<")) {
+            console.error("GeoServer ou AllOrigins devolveu XML/HTML em vez de JSON para Brasil_29:", response.substring(0, 300));
+            return;
         }
+
+        var geojsonData = (typeof response === "string") ? JSON.parse(response) : response;
+
+        var features_Brasil_29 = format_Brasil_29.readFeatures(geojsonData, {
+            dataProjection: 'EPSG:4326',
+            featureProjection: map.getView().getProjection()
+        });
 
         if (features_Brasil_29 && features_Brasil_29.length > 0) {
             jsonSource_Brasil_29.addFeatures(features_Brasil_29);
+            console.log("Sucesso! Feições carregadas para Brasil:", features_Brasil_29.length);
         } else {
-            lyr_Brasil_29.set('title', '<i class="fa-regular fa-triangle-exclamation" title="Parsing Error"></i> ' + lyr_Brasil_29.get('title'));
-            console.warn("No features loaded for Brasil_29");
+            console.warn("Nenhuma feição encontrada no GeoJSON de Brasil_29.");
         }
     } catch (e) {
-        console.error("Error parsing WFS for Brasil_29:", e);
+        console.error("Erro no processamento do GeoJSON para Brasil_29:", e);
     }
 });
+lyr_Brasil_29.set('mgbMetadataUuid', 'c882d2ba-b7cf-4b91-b122-8cf1e5161a66');
+
 var group_Limites = new ol.layer.Group({
                                 layers: [lyr_Piau_27,lyr_MunicpiosPiau_28,lyr_Brasil_29,],
                                 fold: 'close',
@@ -1096,26 +1028,26 @@ var group_Clima = new ol.layer.Group({
                                 layers: [lyr_Precipitaoacumulada2025CHIRPS_23,lyr_IrradiaoSolarDiriaINPE_24,lyr_Albedomdiaanual2025MODIS_25,lyr_TemperaturaMdiaanual2025_26,],
                                 fold: 'close',
                                 title: 'Clima'});
-var group_Geogrficos = new ol.layer.Group({
+var group_Geograficos = new ol.layer.Group({
                                 layers: [lyr_DeclividadeSRTM_21,lyr_RedeHidrogrficaANA_22,],
                                 fold: 'close',
                                 title: 'Geográficos'});
-var group_Institucionais = new ol.layer.Group({
-                                layers: [lyr_CadastroAmbientalRuralCAR_16,lyr_SistemadeGestoFundiriaSIGEF_17,lyr_BiomasMAPBIOMAS_18,lyr_UsoeocupaodoSolo_19,lyr_reasdeconservaoICMBio_20,],
-                                fold: 'close',
-                                title: 'Institucionais'});
-var group_InfraestruturaEnergtica = new ol.layer.Group({
-                                layers: [lyr_usinas_foto_editado_15,],
-                                fold: 'close',
-                                title: 'Infraestrutura Energética'});
-var group_Existentes = new ol.layer.Group({
+var group_Existente = new ol.layer.Group({
                                 layers: [lyr_SubestaesBaseExistente_13,lyr_Linhadetransmissaoexistente_14,],
                                 fold: 'close',
-                                title: 'Existentes'});
-var group_Planejadas = new ol.layer.Group({
+                                title: 'Existente'});
+var group_Planejada = new ol.layer.Group({
                                 layers: [lyr_Linhadetransmissoplanejado_11,lyr_SubestaesExpansoPlanejada_12,],
                                 fold: 'close',
-                                title: 'Planejadas'});
+                                title: 'Planejada'});
+var group_InfraestruturaEnergtica = new ol.layer.Group({
+                                layers: [lyr_usinas_foto_editado_15, group_Existente, group_Planejada,],
+                                fold: 'close',
+                                title: 'Infraestrutura Energética'});
+var group_Institucionais = new ol.layer.Group({
+                                layers: [lyr_CadastroAmbientalRuralCAR_16,lyr_SistemadeGestoFundiriaSIGEF_17,lyr_BiomasMAPBIOMAS_18,lyr_UsoeocupaodoSolo_19,lyr_reasdeconservaoICMBio_20,group_InfraestruturaEnergtica,],
+                                fold: 'close',
+                                title: 'Institucionais'});
 var group_Mapasderestrio = new ol.layer.Group({
                                 layers: [lyr_Restrioporcorpohdrico_6,lyr_Restrioporreadeconservao_7,lyr_Restrioporvegetaonatural_8,lyr_Restriopordeclividade_9,lyr_Restrioreaurbana_10,],
                                 fold: 'close',
@@ -1129,7 +1061,69 @@ var group_MapaBase = new ol.layer.Group({
                                 fold: 'close',
                                 title: 'Mapa Base'});
 
-lyr_OSMStandard_0.setVisible(false);lyr_GoogleHybrid_1.setVisible(false);lyr_ESRITopo_2.setVisible(true);lyr_Municipioscomaltopotencialenergticosolar_3.setVisible(false);lyr_PotencialEnergticoSolar_4.setVisible(true);lyr_reaoptasaimplantaodeenergiasolar_5.setVisible(false);lyr_Restrioporcorpohdrico_6.setVisible(false);lyr_Restrioporreadeconservao_7.setVisible(false);lyr_Restrioporvegetaonatural_8.setVisible(false);lyr_Restriopordeclividade_9.setVisible(false);lyr_Restrioreaurbana_10.setVisible(false);lyr_Linhadetransmissoplanejado_11.setVisible(false);lyr_SubestaesExpansoPlanejada_12.setVisible(false);lyr_SubestaesBaseExistente_13.setVisible(false);lyr_Linhadetransmissaoexistente_14.setVisible(false);lyr_usinas_foto_editado_15.setVisible(true);lyr_CadastroAmbientalRuralCAR_16.setVisible(false);lyr_SistemadeGestoFundiriaSIGEF_17.setVisible(false);lyr_BiomasMAPBIOMAS_18.setVisible(false);lyr_UsoeocupaodoSolo_19.setVisible(false);lyr_reasdeconservaoICMBio_20.setVisible(false);lyr_DeclividadeSRTM_21.setVisible(false);lyr_RedeHidrogrficaANA_22.setVisible(false);lyr_Precipitaoacumulada2025CHIRPS_23.setVisible(false);lyr_IrradiaoSolarDiriaINPE_24.setVisible(false);lyr_Albedomdiaanual2025MODIS_25.setVisible(false);lyr_TemperaturaMdiaanual2025_26.setVisible(false);lyr_Piau_27.setVisible(true);lyr_MunicpiosPiau_28.setVisible(true);lyr_Brasil_29.setVisible(true);
+
+var group_base_dados = new ol.layer.Group({
+    layers: [
+            group_Clima,
+            group_Geograficos,
+            group_Institucionais,     
+        ],
+    fold: 'close',
+    title: 'Base de dados'
+});
+var group_energetico = new ol.layer.Group({
+    layers: [
+        group_InfraestruturaEnergtica,
+        lyr_Restriopordeclividade_9,
+    ],
+    fold: 'close',
+    title: 'Energético'
+});
+
+var group_ambiental = new ol.layer.Group({
+    layers: [
+        lyr_Restrioporcorpohdrico_6,
+        lyr_Restrioporreadeconservao_7,
+        lyr_Restrioporvegetaonatural_8,
+        lyr_Restrioreaurbana_10,
+        lyr_Piau_27,lyr_MunicpiosPiau_28,
+
+    ],
+    fold: 'close',
+    title: 'Ambiental'
+});
+
+var group_economico = new ol.layer.Group({
+    layers: [
+        lyr_SistemadeGestoFundiriaSIGEF_17,
+        lyr_Restriopordeclividade_9, 
+    ],
+    fold: 'close',
+    title: 'Econômico'
+});
+
+var group_cenarios = new ol.layer.Group({
+    layers: [
+        group_economico,
+        group_ambiental,
+        group_energetico,
+    ],
+    fold: 'close',
+    title: 'Cenários'
+});
+var group_TCC_Potencial_Solar = new ol.layer.Group({
+    layers: [
+        group_cenarios,
+        group_PotencialSolar,
+        group_Mapasderestrio,
+        group_base_dados,
+        group_Limites,
+    ],
+    fold: 'close',
+    title: 'TCC: Mapeamento do Potencial Geográfico Energético Solar no Estado do Piauí'
+});
+
+lyr_OSMStandard_0.setVisible(false);lyr_GoogleHybrid_1.setVisible(false);lyr_ESRITopo_2.setVisible(true);lyr_Municipioscomaltopotencialenergticosolar_3.setVisible(false);lyr_PotencialEnergticoSolar_4.setVisible(false);lyr_reaoptasaimplantaodeenergiasolar_5.setVisible(false);lyr_Restrioporcorpohdrico_6.setVisible(false);lyr_Restrioporreadeconservao_7.setVisible(false);lyr_Restrioporvegetaonatural_8.setVisible(false);lyr_Restriopordeclividade_9.setVisible(false);lyr_Restrioreaurbana_10.setVisible(false);lyr_Linhadetransmissoplanejado_11.setVisible(false);lyr_SubestaesExpansoPlanejada_12.setVisible(false);lyr_SubestaesBaseExistente_13.setVisible(false);lyr_Linhadetransmissaoexistente_14.setVisible(false);lyr_usinas_foto_editado_15.setVisible(false);lyr_CadastroAmbientalRuralCAR_16.setVisible(false);lyr_SistemadeGestoFundiriaSIGEF_17.setVisible(false);lyr_BiomasMAPBIOMAS_18.setVisible(false);lyr_UsoeocupaodoSolo_19.setVisible(false);lyr_reasdeconservaoICMBio_20.setVisible(false);lyr_DeclividadeSRTM_21.setVisible(false);lyr_RedeHidrogrficaANA_22.setVisible(false);lyr_Precipitaoacumulada2025CHIRPS_23.setVisible(false);lyr_IrradiaoSolarDiriaINPE_24.setVisible(false);lyr_Albedomdiaanual2025MODIS_25.setVisible(false);lyr_TemperaturaMdiaanual2025_26.setVisible(false);lyr_Piau_27.setVisible(false);lyr_MunicpiosPiau_28.setVisible(true);lyr_Brasil_29.setVisible(false);
 var layersList = [group_MapaBase,group_PotencialSolar,group_Mapasderestrio,group_Planejadas,group_Existentes,group_InfraestruturaEnergtica,group_Institucionais,group_Geogrficos,group_Clima,group_Limites];
 lyr_Municipioscomaltopotencialenergticosolar_3.set('fieldAliases', {'fid': 'fid', 'CD_MUN': 'CD_MUN', 'NM_MUN': 'NM_MUN', 'CD_RGI': 'CD_RGI', 'NM_RGI': 'NM_RGI', 'CD_RGINT': 'CD_RGINT', 'NM_RGINT': 'NM_RGINT', 'CD_UF': 'CD_UF', 'NM_UF': 'NM_UF', 'SIGLA_UF': 'SIGLA_UF', 'CD_REGIA': 'CD_REGIA', 'NM_REGIA': 'NM_REGIA', 'SIGLA_RG': 'SIGLA_RG', 'CD_CONCU': 'CD_CONCU', 'NM_CONCU': 'NM_CONCU', 'AREA_KM2': 'AREA_KM2', 'dens_demo': 'dens_demo', 'dens_2010': 'dens_2010', });
 lyr_Linhadetransmissoplanejado_11.set('fieldAliases', {'fid': 'fid', 'Nome': 'Nome', 'Ano_Planej': 'Ano_Planej', 'Tensao': 'Tensao', 'Extensao': 'Extensao', 'Concession': 'Concession', 'Shape_STLe': 'Shape_STLe', });

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UFPI AcervoMAP</title>
+    <meta name="description" content="AcervoMAP: plataforma web para consulta, visualização e reutilização da produção cartográfica acadêmica da UFPI.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="cabecalho">
+        <section class="logo" aria-label="Instituições">
+            <img src="images/logo.png" alt="Brasão da UFPI" class="brasao">
+            <img src="images/GeoInova.png" alt="Logo GeoInova" class="GeoInova">
+            <div class="separador-header"></div>
+            <div class="titulo">
+                <h4>Engenharia Cartográfica e de Agrimensura</h4>
+            </div>
+                        
+        </section>
+
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-principal">
+            <span class="menu-toggle__barras" aria-hidden="true"></span>
+            <span class="sr-only">Abrir menu</span>
+        </button>
+
+        <nav id="menu-principal" class="button-inf" aria-label="Navegação principal">
+            <a href="#inicio" class="btn-sobre">Início</a>
+            <a href="#sobre" class="btn-ajuda">Sobre</a>
+            <a href="#equipe" class="btn-ajuda">Equipe</a>
+            <a href="#dados" class="btn-ajuda">Dados</a>
+        </nav>
+    </div>
+</header>
+
+<main id="conteudo">
+    
+    <section id="inicio" class="hero" aria-labelledby="hero-titulo">
+        <div class="hero__fundo" aria-hidden="true"></div>
+        <div class="container hero__grade">
+            <div class="hero__identidade">
+                <img src="images/Emblema AcervoMap UFPI.png" alt="Emblema do AcervoMAP UFPI" class="hero__emblema">
+                <div style="display: flex;" class="titulo_pag">
+                    <h1 id="hero-titulo"> UFPI Acervo</h1>
+                    <h1 style="color: #FFCC33;" id="hero-titulo"> MAP</h1>
+                </div>
+                <p class="hero__subtitulo">Mapeamento do Potencial Geográfico Energético Solar do Piauí</p>
+                <div class="hero__acoes">
+                    <a href="/index.html" class="btn btn--primario js-sigweb">Acessar</a>
+                </div>
+            </div>
+
+            <figure class="hero__previa">
+                <div class="moldura">
+                    <img src="images/SIGWEB.png" alt="Prévia da interface do UFPI AcervoMAP" width="2555" height="1347">
+                </div>
+            </figure>
+        </div>
+    </section>
+
+    
+    <section id="sobre" class="secao secao--clara" aria-labelledby="sobre-titulo">
+        <div class="container sobre__grade">
+            <div>
+                <h2 id="sobre-titulo">Sobre</h2>
+                <div class="text-sobre">
+                    <p>O UFPI AcervoMAP é um Sistema de Informação Geográfica Web (SIGWeb), desenvolvido como produto final do Trabalho de Conclusão de Curso intitulado “Desenvolvimento de Plataforma SIGWeb Open Source para Gestão e Difusão de Dados Geoespaciais na UFPI”, do curso de Engenharia Cartográfica e de Agrimensura da Universidade Federal do Piauí (UFPI).</p>
+                    <p>A plataforma utiliza ferramentas de código aberto para a disponibilização, visualização e consulta de dados geoespaciais. Sua implementação integra as tecnologias PostgreSQL/PostGIS, GeoServer e OpenLayers, com apoio do QGIS para o preparo dos dados. Nesta versão, a plataforma utiliza como estudo de caso os dados geoespaciais do Trabalho de Conclusão de Curso “Mapeamento do Potencial Geográfico Energético Solar do Piauí”.</p>
+                    <p>Entre as funcionalidades disponíveis, destacam-se as ferramentas de pesquisa por município, recorte espacial de dados vetoriais e raster e integração de dados externos por meio de geosserviços. A interface também permite filtrar e gerenciar as camadas disponíveis, consultar seus metadados, ajustar a opacidade, visualizar tabelas de atributos, realizar o download dos dados e compartilhar os endereços das camadas nos padrões da OGC (WMS e WFS).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section id="equipe" class="secao secao--cinza" aria-labelledby="equipe-titulo">
+        <div class="container">
+            <h2 style="margin-bottom: 5%;" id="equipe-titulo">Equipe de desenvolvimento</h2>
+            <ul class="equipe-grade" id="lista-equipe">
+                <li class="membro">
+                    <div class="membro__foto"><img src="/Apresentacao/images/Kenedy.png" alt="Kenedy Anderson Gomes da Silva"></div>
+                    <strong>Kenedy Anderson Gomes da Silva</strong>
+                    <span>Engenheiro Cartógrafo e Agrimensor</span>
+                    <span>Desenvolvedor</span>
+                    <span>Email: akenedy38@gmail.com</span>
+                    <span style="display: flex; align-items: center;">Lattes: 
+                        <a href="http://lattes.cnpq.br/5640523281588076">
+                            <p style="font-size: small; display:inline-flex; color: rgb(80, 80, 216);"> http://lattes.cnpq.br/5640523281588076</p>
+                        </a>
+                    </span>
+                </li>
+                <li class="membro">
+                    <div class="membro__foto"><img src="/Apresentacao/images/Samantha.png" alt="Samantha Larusy Nunes Siqueira"></div>
+                    <strong>Samantha Larusy Nunes Siqueira</strong>
+                    <span>Engenheira Cartógrafa e Agrimensora</span>
+                    <span>Desenvolvedor</span>
+                    <span>Email: samanthalarusy@gmail.com</span>
+                    <span style="display: flex; align-items: center;">Lattes: 
+                        <a href="http://lattes.cnpq.br/9151904194096558">
+                            <p style="font-size: small; display:inline-flex; color: rgb(80, 80, 216);">http://lattes.cnpq.br/9151904194096558</p>
+                        </a>
+                    </span>
+                </li>
+                <li class="membro">
+                    <div class="membro__foto"><img src="/Apresentacao/images/Elayne.png" alt=""></div>
+                    <strong>Elayne da Silva Figueiredo</strong>
+                    <span>Engenheira Cartógrafa e Agrimensora</span>
+                    <span>Orientadora</span>
+                    <span>Email:  elaynef@ufpi.edu.br</span>
+                    <span style="display: flex; align-items: center;">Lattes: 
+                        <a href="http://lattes.cnpq.br/3882599359083651">
+                            <p style="font-size: small; color: rgb(80, 80, 216);">http://lattes.cnpq.br/3882599359083651</p>
+                        </a>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="dados" class="secao secao--clara" aria-labelledby="dados-titulo">
+        <div class="container dados__grade">
+            <div>
+                <h2 id="dados-titulo">Dados</h2>
+                <p style="display: flex;">JESUS, Maria Rita Silva de; AMARAL, Sarah de Oliveira. Mapeamento do potencial geográfico energético solar no estado do Piauí. 2026. Trabalho de Conclusão de Curso (Graduação em Engenharia Cartográfica e de Agrimensura) – Centro de Tecnologia, Universidade Federal do Piauí, Teresina, 2026.</p>
+            </div>
+        </div>
+    </section>
+</main>
+<footer class="site-footer">
+    <div class="container footer__grade">
+        <div>
+            <strong>AcervoMAP</strong>
+            <p>Universidade Federal do Piauí (UFPI)<br>Curso de Engenharia Cartográfica e de Agrimensura</p>
+            <p>Trabalho de Conclusão de Curso</p>
+        </div>
+        <nav aria-label="Links do rodapé">
+            <a href="#inicio">Início</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#equipe">Equipe</a>
+            <a href="#dados">Dados</a>
+        </nav>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

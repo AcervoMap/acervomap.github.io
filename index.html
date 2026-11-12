@@ -3,14 +3,15 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="./resources/ol.css">
         <link rel="stylesheet" href="resources/fontawesome-all.min.css">
         <link href="resources/photon-geocoder-autocomplete.min.css" rel="stylesheet">
         <link rel="stylesheet" href="./resources/ol-layerswitcher.css">
         <link rel="stylesheet" href="./resources/qgis2web.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <style>
         html, body {
             background-color: #ffffff;
@@ -43,15 +44,362 @@
             margin: 0;
         }
         </style>
-        <title></title>
+        <title>UFPI AcervoMAP</title>
     </head>
     <body>
-        <div id="map">
-            <div id="popup" class="ol-popup">
-                <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-                <div id="popup-content"></div>
+        <header>
+                <div class="cabecalho">
+                    <section class="logo">
+                        <img src="images/logo.png" alt="Logo UFPI" class="brasao">
+                        <img src="images/GeoInova.png" alt="Logo GeoInova" class="GeoInova">
+                        <div class="separador-header"></div>
+                        <img src="images/Emblema AcervoMap UFPI.png" alt="Logo SIGWeb" class="logo_SIGWEB">
+                        <div class="titulo">
+                            <div style="display: flex;" class="titulo_pag">
+                                <h2> UFPI Acervo</h2>
+                                <h2 style="color: #FFCC33;"> MAP</h2>
+                            </div>
+                            <h4>Engenharia Cartográfica e de Agrimensura</h4>
+                        </div>
+                        <div class="separador-header"></div>
+                        <p class="TCC">Mapeamento do Potencial Geográfico Energético Solar do Piauí</p>
+                        
+                    </section>
+                    <section class="button-inf">
+                    <a class="btn-home" href="/Apresentacao/LandingPage.html"><i class="fas fa-home"></i></a>
+                    <button id="btn-ajuda" class="btn-ajuda" data-bs-toggle="modal" data-bs-target="#ajuda"><img src="/images/icons8-ajuda-100.png" alt=""> Ajuda</button>
+
+                    <!-- https://getbootstrap.com/docs/5.3/components/modal/-->
+                    <div class="modal fade" id="ajuda" tabindex="-1"  aria-hidden="true">
+                    
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4>Ajuda</h4>
+                                    
+                                </div>
+                                <div class="modal-body">
+                                    <!-- https://getbootstrap.com/docs/5.3/components/navs-tabs/ -->
+                                    <nav>
+                                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Barra de Ferramentas do Mapa</button>
+                                            </li>
+                                            <li class="nav-item" role="funcionalidades">
+                                                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Outras Funcionalidades</button>
+                                            </li>    
+                                        </ul>
+                                    </nav>
+                                       <div class="tab-content">
+                                            <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                    
+                                                <div class="barra-ferramentas">
+                                                    
+                                                    <div class="ferramenta" style="margin-top: 3%;">
+                                                        <i class="fas fa-ruler"></i> 
+                                                        <span>Medir distâncias e áreas</span>
+                                                    </div>
+                                                    <div class="ferramenta">
+                                                        <i class="fas fa-plus"></i> 
+                                                        <span>Zoom in</span>
+                                                    </div>
+                                                    <div class="ferramenta">
+                                                        <i class="fas fa-minus"></i> 
+                                                        <span>Zoom out</span>
+                                                    </div>
+                                                    <div class="ferramenta">
+                                                        <i class="fas fa-home"></i> 
+                                                        <span>Voltar a página inicial</span>
+                                                    </div>
+                                                    <div class="ferramenta">
+                                                        <img src="/Apresentacao/images/OpenLayers.png" alt="">
+                                                        <span>Controle de camadas</span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                                                <nav>
+                                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                                        <li class="nav-item" role="presentation">
+                                                            <button class="nav-link active" id="operacoes-tab" data-bs-toggle="tab" data-bs-target="#operacoes-tab-pane" type="button" role="tab" aria-controls="operacoes-tab-pane" aria-selected="true">Operações sobre Camadas</button>
+                                                        </li>
+                                                        <li class="nav-item" role="presentation">
+                                                            <button class="nav-link" id="submenus-tab" data-bs-toggle="tab" data-bs-target="#submenus-tab-pane" type="button" role="tab" aria-controls="submenus-tab-pane" aria-selected="false">Submenus</button>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            <div class="tab-content">
+                                                <div class="tab-pane fade show active" id="operacoes-tab-pane" role="tabpanel" aria-labelledby="operacoes-tab" tabindex="0">
+                                                    <img style="width: 100%; height: auto;" src="/Apresentacao/images/Operacoes.png" alt="">
+                                                    <div class="barra-ferramentas">
+                                                    
+                                                        <div class="ferramenta" style="margin-top: 3%;">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/metadado.png" alt="Metadado">
+                                                            <span>Exibe o metadado associado à camada</span>
+                                                            
+                                                        </div>
+                                                        <div class="ferramenta">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/download.png" alt="Download">
+                                                            <span>Permite o download em formato GeoTIFF (raster) ou SHP (vetor) da respectiva camada</span>
+                                                        </div>
+                                                        <div class="ferramenta">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/URL_OGC.png" alt="Metadado">
+                                                            <span>Mostra a URL WMS (raster) ou WFS (vetor) da camada para fins de compartilhamento com outras plataformas</span>
+                                                        </div>
+                                                        <div class="ferramenta">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/atributos.png" alt="Atributos">
+                                                            <span>Permite consultar os dados alfanuméricos associados às feições geográficas e selecionar registros específicoS</span>
+                                                        </div>
+                                                        <div class="ferramenta">
+                                                            <input style="max-width: 5%;" type="range" min="0" max="0.2" step="0.05" value="0.1">
+                                                            <span> Controla a opacidade da camada, permitindo a visualização simultânea de múltiplas camadas</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-content">
+                                                <div class="tab-pane fade" id="submenus-tab-pane" role="tabpanel" aria-labelledby="submenu-tab" tabindex="0">
+        
+                                                    <div class="barra-ferramentas">
+                                                            <p class="title-submenu">Submenu de Pesquisa</p>
+                                                            <span>Este menu apresenta duas opções de pesquisa: <br> No primeiro digite o nome do municipio e ao clicar no botão de pesquisa, o mapa se desloca para a posição do local pesquisado e um marcador é exibido.
+                                                            <br> No segundo, insira as coordenadas geográficas em graus decimais e ao clicar no botão de localizar, o mapa se desloca para a posição do local pesquisado e um marcado é exibido.</span>
+                                                            </span>
+                                                            <img src="/Apresentacao/images/Pesquisa.png" alt="">
+                                                        
+                                                            <p class="title-submenu">Submenu de Recorte Espacial</p>
+                                                            <span>Este menu apresenta duas opções principais para a extração de dados geoespaciais: <br> 
+                                                            1. Desenhar Área: Utilize as ferramentas de desenho disponíveis na interface (como polígonos, linhas ou retângulos) para delimitar o perímetro de interesse diretamente sobre o mapa. Aplique a uma camada cadastrada na pltaforma e receba o recorte em formato GeoTIFF (raster) e GeoPackage (Vetor) <br> </span>
+                                                            <img src="/Apresentacao/images/recorte_raster_desenhar.png" alt="Recorte Espacial por Desenho">
+
+                                                            <span>2. Importar por Arquivo: Envie um arquivo vetorial compatível (como Shapefile, KML ou KMZ) para realizar o recorte dos dados em áreas que interseccionam este arquivo.</span>
+                                                            <img src="/Apresentacao/images/Recorte_desenhar.png" alt="Recorte Espacial por Arquivo">
+
+                                                            <p class="title-submenu">Submenu de Dados Externos</p>
+                                                            <span>Permite integrar e visualizar fontes de dados externos e geoserviços no portal: <br> 
+                                                            Insira o endereço (URL) de serviços compatíveis com padrões WMS para adicionar novas camadas para combiná-las com o acervo da plataforma.</span>
+                                                            <span>
+                                                                Exemplo de URL compatível: <br> https://geoservicos.inde.gov.br/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers=BNDES:AP_2014&styles=&bbox=-74,-34,-27,6&width=297&height=245&tiled<br>=true&srs=EPSG:4326&format=image/png&transparent=true
+                                                            </span>
+                                                    </div>
+
+                                                    
+                                                </div>
+
+                                            </div>
+                                            
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    
+                
+                </div>
+                       
+                    </section>
+                </div>
+            </header>
+            <main>
+                <nav id="sidebar">
+                    <ul>
+                        <li> 
+                            <a href="#">
+                                <img src="images/icons8-pesquisar.svg" alt="" style="width: 50%; height: 50%; margin-bottom: 20%;">
+                                <span class="text-menu">Pesquisar </span>
+                            </a>
+                        </li>
+                        <li> 
+                            <a href="#">
+                                <img src="images/icons8-recortar-100.png" alt="" style="width: 40%; height: 40%; margin-bottom: 20%;">
+                                <span class="text-menu">Recorte espacial </span>
+                            </a>  
+                            
+                        </li>
+                        <li> 
+                            <a href="#">
+                                <img src="images/icons8-globo-100.png" alt="" style="width: 50%; height: 50%; margin-bottom: 20%;">
+                                <span class="text-menu"> Dados externos </span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div id="sub-menu-pesquisar" class="sub-menu">
+                        <div class="titulo_sub-menu">
+                            <img src="images/icons8-pesquisar-cinza.svg" alt="" style="width: 8%; height: 8%; margin-right: 5%;">
+                            <span style="display: flex; flex-shrink: 1;">Pesquisar </span>
+                            <button id="btn-fechar-sub-menu-pesquisar" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt=""></button>
+                        </div>
+                        <p class="titulo_item_sub-menu">Localização por município ou por coordenadas geográficas <br> <br> Município </p> 
+                        <div id="busca-municipio-container">
+                        <input id="input-municipio" class="campo" placeholder="Digite o nome do Municipio">
+                        <button id="btn-municipio" class="button_campo"> <img src="images/icons8-pesquisar.svg" alt="" style="width: 7%; height: 7%;">
+                            <span>Pesquisar </span>
+                        </button>
+                        </div>                               
+
+                        <div class="separador"></div>
+
+                        <p class="titulo_item_sub-menu">Insira as coordenadas em graus decimais</p>
+                        <div class="coordenadas_container">
+                            <p class="titulo_item_sub-menu">Latitude</p>
+                            <input id="input-lat" class="campo" placeholder="">
+                            <p class="titulo_item_sub-menu">Longitude</p>
+                            <input id="input-long" class="campo" placeholder="">
+                        </div>
+                        <button id="btn-localizar" class="button_campo"> <img src="images/icons8-localização-64.png" alt="" style="width: 7%; height: 7%;">
+                            <span>Localizar</span>
+                        </button>
+                </div>
+                <div id="sub-menu-recorte" class="sub-menu">
+                    <div class="titulo_sub-menu">
+                        <img src="images/icons8-recortar-preto.png" alt="" style="width: 8%; height: 8%; margin-right: 5%;">
+                        <span style="display: flex; flex-shrink: 1;">Recorte espacial </span>
+                        <button id="btn-fechar-sub-menu-recorte" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt=""></button>
+                    </div>
+                    <p class="titulo_item_sub-menu"><br> Defina uma área de interesse para realizar operações de recorte espacial</p> 
+                    <div class="container-tab">
+                        <input type="radio" name="slider" id="Desenhar_no_mapa" checked>
+                        <input type="radio" name="slider" id="Importar_arquivo">
+                        <nav class="tabs">
+                            <label for="Desenhar_no_mapa" class="Desenhar_no_mapa">Desenhar</label>
+                            <label for="Importar_arquivo" class="Importar_arquivo">Arquivo</label>
+                            <div class="slider"></div>
+                        </nav>
+                        <section class="content-tab">
+                            <div class="content content-1">
+                                <p class="subtitle_tab"> Escolha a forma e adicione ao mapa</p>
+                                <span class="input-group">
+                                    <label class="input-group-text" for="forma">Forma:</label>
+                                    <select class="form-select" id="forma">
+                                        <option value="None">Nenhum</option>
+                                        <option value="Circle">Círculo</option>
+                                        <option value="Square">Quadrado</option>
+                                        <option value="Box">Retângulo</option>
+                                        <option value="Star">Estrela</option>
+                                        <option value="Poligono">Poligono</option>
+                                    </select>
+                                    <input class="form-control" type="button" value="Limpar" id="Limpar">
+                                </span>
+                                <div class="recorte_camada">
+                                    <p> Aplicar a uma camada </p> 
+                                    <select id="select-recorte" class="campo">
+                                        <option value="">Selecione uma camada...</option>
+                                    </select>
+                                    <button id="btn-executar-recorte" class="button_campo"> <img src="images/icons8-recortar-100.png" alt="" style="width: 7%; height: 7%;">  
+                                        <span> Recortar </span>
+                                </button>
+                        </div>
+                            </div>
+                            <div class="content content-3">
+                                <p class="subtitle_tab"> Importe um arquivo de uma área (KMZ, KML ou SHP)</p>
+                                <input type="file" id="file-input" accept=".kml,.kmz, .shp, .shx, .prj, .dbf, .cpg">
+                                <div class="recorte_camada">
+                                    <p> Aplicar a uma camada </p> 
+                                    <select id="select-recorte-arquivo" class="campo">
+                                        <option value="">Selecione uma camada...</option>
+                                    </select>
+                                    <button id="btn-executar-recorte-arquivo" class="button_campo"> <img src="images/icons8-recortar-100.png" alt="" style="width: 7%; height: 7%;">  
+                                        <span> Recortar </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+                        
+                    </div>
+
+                </div>
+                <div id="sub-menu-externo" class="sub-menu">
+                        <div class="titulo_sub-menu">
+                            <img src="images/icons8-globo-preto.png" alt="" style="width: 8%; height: 8%; margin-right: 5%;">
+                            <span style="display: flex; flex-shrink: 1;"> Dados externos </span>
+                            <button id="btn-fechar-sub-menu-externo" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt=""></button>
+                        </div>
+                        <p class="titulo_item_sub-menu">Buscar camadas <br> </p>
+                            <p> <br> Selecione a instituição </p> 
+                            <select id="select-instituicao" class="campo">
+                                <option value="ANA"> Agência Nacional de Águas e Saneamento Básico (ANA)</option>
+                                <option value="FUNAI">Fundação Nacional dos Povos índigenas (FUNAI) </option>
+                                <option value="IBAMA">Instito Brasileiro do Meio Ambiente e dos Recursos Renováveis (IBAMA) </option>
+                                <option value="IBGE"> Instituto Brasileiro de Geográfia e Estatística (IBGE)</option>
+                            </select>
+                            <button id="btn-externo" class="button_campo"> <img src="images/icons8-pesquisar.svg" alt="" style="width: 7%; height: 7%;">
+                                <span>Pesquisar </span>
+                            </button>
+                        <div id="div-camadas-wms" style="display: none; margin-top: 15px;">
+                            <p>Selecione a camada</p>
+                            <select id="select-camada-wms" class="campo"></select>
+                            <button id="btn-adicionar-camada" class="button_campo" style="margin-top: 8px;">
+                                <span>Adicionar ao Mapa</span>
+                            </button>
+                        </div>
+                        <div class="separador"></div>
+                        <p> <br> URL WMS </p> 
+                        <input id="input-url-wms" class="campo" placeholder="url wms da camada">
+                        <button id="btn-url-wms" class="button_campo" > <i class="fas fa-plus"></i>
+                            <span>Adicionar</span>
+                        </button>
+                </div>
+                <div id="popup-camada-opcoes" class="popup-camada-opcoes" style="display:none">
+                    <div class="popup-camada-opcoes-header">
+                        <p>Operações sobre a Camada</p>
+                        <button id="btn-close-popup-opcao">&times;</button>
+                    </div>
+                    <div class="popup-camada-opcoes-content">
+                        <div class="operacoes">
+                            <button id="btn-metadado" title="Exibir Metadados (PDF)"><i class="fas fa-file-pdf"></i></button>
+                            <button id="btn-tabela-atributos" title="Exibir Tabela de Atributos"><i class="fas fa-table"></i></button>                      
+                            <button id="btn-wms" title="Copiar Link WMS"><i class="fas fa-link"></i></button>
+                            <button id="btn-wfs" title="Copiar Link WFS"><i class="fas fa-link"></i></button>
+                            <button id="btn-download-vetor" title="Download Shapefile/GeoPackage"><i class="fas fa-download"></i></button>
+                            <button id="btn-download-raster" title="Download Geotiff"><i class="fas fa-file-archive"></i></button>
+                        </div>
+                        <div class="opacidade">
+                            <label for="controle-opacidade">Opacidade</label>
+                            <input type="range" id="controle-opacidade" min="0" max="1" step="0.05" value="1">
+                        </div>
+                    </div>
+                </div>
+                <div id="atributos-container" class="atributos-container" style="display:none;">
+                    <div class="atributos-header">
+                        <span id="atributos-titulo">Tabela de Atributos</span>
+                        <button id="btn-fechar-tabela" class="btn-fechar-tabela">&times;</button>      
+                    </div>
+                    <div class="atributos-body">
+                        <table id="atributos-dados" class="atributos-dados">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="modal-url-overlay" class="modal-url" style="display: none;">
+                    <div class="url-content">
+                        <div class="url-header">
+                            <span id="url-titulo">URL WMS</span>
+                            <button type="button" id="btn-fechar-url" class="btn-fechar-url">&times;</button>
+                        </div>
+                        <div class="url-body">
+                            <input type="text" id="url-copiar" readonly>
+                        </div>
+                        <div class="modal-url-footer">
+                            <button type="button" id="btn-url-copiar" class="btn-url-copiar">Copiar</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="map">
+                    <img src="images/NorthArrow_02.svg" alt="Norte" class="north-icon">
+                    <div id="popup" class="ol-popup">
+                        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                        <div id="popup-content"></div>
+                    </div>
             </div>
-        </div>
+        </main>  
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         <script src="resources/qgis2web_expressions.js"></script>
         <script src="./resources/functions.js"></script>
         <script src="./resources/ol.js"></script>
@@ -60,6 +408,7 @@
         <script src="resources/olms.js"></script>
         <script src="layers/usinas_foto_editado_15.js"></script>
         <script src="styles/Municipioscomaltopotencialenergticosolar_3_style.js"></script><script src="styles/Linhadetransmissoplanejado_11_style.js"></script><script src="styles/SubestaesExpansoPlanejada_12_style.js"></script><script src="styles/SubestaesBaseExistente_13_style.js"></script><script src="styles/Linhadetransmissaoexistente_14_style.js"></script><script src="styles/usinas_foto_editado_15_style.js"></script><script src="styles/CadastroAmbientalRuralCAR_16_style.js"></script><script src="styles/SistemadeGestoFundiriaSIGEF_17_style.js"></script><script src="styles/BiomasMAPBIOMAS_18_style.js"></script><script src="styles/reasdeconservaoICMBio_20_style.js"></script><script src="styles/RedeHidrogrficaANA_22_style.js"></script><script src="styles/Piau_27_style.js"></script><script src="styles/MunicpiosPiau_28_style.js"></script><script src="styles/Brasil_29_style.js"></script>
+        <script type="module" src="resources/control.MiniMap.js"></script>
         <script>
             function fetchWFSMunicipioscomaltopotencialenergticosolar_3Data(title, callback) {
                 var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Municipios_alto_potencial_energético_solar&SRSNAME=EPSG:3857";
@@ -285,7 +634,11 @@
                     });
             }
         </script>
-        <script>
+
+        <!-- ----------------------------------------
+        CADASTRO AMBIENTAL RURAL (CAR)
+        -------------------------------------------- -->
+         <script>
             function fetchWFSCadastroAmbientalRuralCAR_16Data(title, callback) {
                 var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Cadastro_Ambiental_Rural&SRSNAME=EPSG:3857";
 
@@ -329,7 +682,12 @@
                         }
                     });
             }
-        </script>
+        </script> 
+
+        <!--
+        -------------------------------------------------
+        SIGEF
+        ----------------------------------------------- -->
         <script>
             function fetchWFSSistemadeGestoFundiriaSIGEF_17Data(title, callback) {
                 var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Sistema_de_Gestao_Fundiaria&SRSNAME=EPSG:3857";
@@ -374,7 +732,7 @@
                         }
                     });
             }
-        </script>
+        </script> 
         <script>
             function fetchWFSBiomasMAPBIOMAS_18Data(title, callback) {
                 var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Biomas_mapbiomas&SRSNAME=EPSG:3857";
@@ -510,9 +868,9 @@
                     });
             }
         </script>
-        <script>
+       <script>
             function fetchWFSPiau_27Data(title, callback) {
-                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Piauí&SRSNAME=EPSG:3857";
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=sigweb:Piauí&SRSNAME=EPSG:4326&outputFormat=application/json";
 
                 function fetchWithFallback(u) {
                     return fetch(u)
@@ -530,34 +888,33 @@
                         });
                 }
 
-                // Imposta un'icona di caricamento durante il fetch
+                // Ícone de carregamento durante o fetch
                 lyr_Piau_27.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
                 fetchWithFallback(url)
                     .then(function (response) {
                         if (typeof callback === "function") {
                             lyr_Piau_27.set('title', title);
-                            layerSwitcher.renderPanel();
-                            callback(null, response); // Pass null as error
+                            layerSwitcher.renderPanel(); 
+                            callback(null, response);
                         } else {
                             console.error("Callback not defined.");
                         }
                     })
                     .catch(function (error) {
+                        lyr_Piau_27.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                        layerSwitcher.renderPanel();
                         if (typeof callback === "function") {
-                            lyr_Piau_27.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
-                            layerSwitcher.renderPanel();
-                            callback(error, null); // Pass the error
+                            callback(error, null);
                         } else {
-                            lyr_Piau_27.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
-                            layerSwitcher.renderPanel();
                             console.error("Error fetching Piau_27 data:", error);
                         }
                     });
             }
-        </script>
+        </script> 
+        
         <script>
             function fetchWFSMunicpiosPiau_28Data(title, callback) {
-                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Municipios_do_Piaui&SRSNAME=EPSG:3857";
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=sigweb:Municipios_do_Piaui&SRSNAME=EPSG:4326&outputFormat=application/json";
 
                 function fetchWithFallback(u) {
                     return fetch(u)
@@ -600,9 +957,10 @@
                     });
             }
         </script>
-        <script>
+    
+       <script>
             function fetchWFSBrasil_29Data(title, callback) {
-                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Brasil&SRSNAME=EPSG:3857";
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=sigweb:Brasil&SRSNAME=EPSG:4326&outputFormat=application/json";
 
                 function fetchWithFallback(u) {
                     return fetch(u)
@@ -611,7 +969,6 @@
                             return r.text();
                         })
                         .catch(function () {
-                            // Fallback AllOrigins
                             return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
                                 .then(function (r) {
                                     if (!r.ok) throw new Error("Proxy failed");
@@ -620,26 +977,21 @@
                         });
                 }
 
-                // Imposta un'icona di caricamento durante il fetch
                 lyr_Brasil_29.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
                 fetchWithFallback(url)
                     .then(function (response) {
                         if (typeof callback === "function") {
                             lyr_Brasil_29.set('title', title);
                             layerSwitcher.renderPanel();
-                            callback(null, response); // Pass null as error
-                        } else {
-                            console.error("Callback not defined.");
+                            callback(null, response);
                         }
                     })
                     .catch(function (error) {
+                        lyr_Brasil_29.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                        layerSwitcher.renderPanel();
                         if (typeof callback === "function") {
-                            lyr_Brasil_29.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
-                            layerSwitcher.renderPanel();
-                            callback(error, null); // Pass the error
+                            callback(error, null);
                         } else {
-                            lyr_Brasil_29.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
-                            layerSwitcher.renderPanel();
                             console.error("Error fetching Brasil_29 data:", error);
                         }
                     });
@@ -648,35 +1000,10 @@
         <script src="./layers/layers.js" type="text/javascript"></script> 
         <script src="./resources/Autolinker.min.js"></script>
         <script src="./resources/qgis2web.js"></script> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/geotiff@2/dist/geotiff.bundle.js"></script>
+        <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist/geotiff.min.js"></script>
         
-        
-
-        <!-- BOTÃO E PAINEL ESTILO INDE -->
-        <button id="btn-inde" class="btn-inde-flutuante" onclick="togglePainelInde()">🌐 Camadas INDE</button>
-
-        <div id="painel-inde" class="painel-inde-oculto">
-        <div class="painel-header">
-            <strong>Buscar Camadas em Instituições</strong>
-            <span onclick="togglePainelInde()" style="cursor:pointer; float:right; font-weight:bold; font-size:16px;">&times;</span>
-        </div>
-        <hr style="margin: 8px 0; border: 0; border-top: 1px solid #ddd;">
-        
-        <div class="painel-corpo">
-            <label style="font-size: 11px; color: #666; font-weight: bold; display: block; margin-bottom: 4px;">
-            SELECIONE O ÓRGÃO / SERVIÇO:
-            </label>
-            <select id="select-orgao-inde" onchange="atualizarListaCamadasInde()" style="width: 100%; padding: 5px; margin-bottom: 10px; font-size: 12px; border: 1px solid #ccc; border-radius: 4px;">
-            <option value="">---- Selecione uma Instituição ----</option>
-            <option value="IBGE">IBGE - Instituto Brasileiro de Geografia e Estatística</option>
-            <option value="FUNAI">FUNAI - Fundação Nacional dos Povos Indígenas</option>
-            <option value="ICMBIO">ICMBio - Instituto Chico Mendes de Conservação</option>
-            </select>
-
-            <div id="container-camadas-inde" style="max-height: 180px; overflow-y: auto;">
-            <em style="color: #888; font-size: 12px;">Selecione uma instituição acima para carregar as opções disponíveis.</em>
-            </div>
-        </div>
-        </div>
-
     </body>
 </html>

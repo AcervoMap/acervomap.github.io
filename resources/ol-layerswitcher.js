@@ -97,36 +97,18 @@ class LayerSwitcher extends Control {
         LayerSwitcher.enableTouchScroll_(this.panel);
         element.classList.add(CSS_PREFIX + 'group-select-style-' + this.groupSelectStyle);
         element.classList.add(CSS_PREFIX + 'activation-mode-' + this.activationMode);
-        if (this.activationMode === 'click') {
-            // TODO Next: Remove in favour of layer-switcher-activation-mode-click
-            element.classList.add('activationModeClick');
-            this.button.onclick = (e) => {
-                const evt = e || window.event;
-                if (this.element.classList.contains(this.shownClassName)) {
-                    this.hidePanel();
-                }
-                else {
-                    this.showPanel();
-                }
-                evt.preventDefault();
-            };
-        }
-        else {
-            this.button.onmouseover = () => {
+        element.classList.add(CSS_PREFIX + 'group-select-style-' + this.groupSelectStyle);
+        element.classList.add(CSS_PREFIX + 'activation-mode-click');
+
+        this.button.onclick = (e) => {
+            const evt = e || window.event;
+            if (this.element.classList.contains(this.shownClassName)) {
+                this.hidePanel();
+            } else {
                 this.showPanel();
-            };
-            this.button.onclick = (e) => {
-                const evt = e || window.event;
-                this.showPanel();
-                evt.preventDefault();
-            };
-            this.panel.onmouseout = (evt) => {
-                if (!this.panel.contains(evt.relatedTarget)) {
-                    this.hidePanel();
-                }
-            };
+            }
+            evt.preventDefault();
         }
-        this.updateButton();
     }
     /**
      * Set the map instance the control is associated with.
@@ -252,6 +234,118 @@ class LayerSwitcher extends Control {
             // Set child indetermiate state based on their parent's visibility
             LayerSwitcher.setChildVisibility(map);
         }
+
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'layer-switcher-header';
+        
+        const titleHeading = document.createElement('h3');
+        titleHeading.className = 'layer-switcher-main-title';
+        titleHeading.innerText = 'Camadas';
+        headerDiv.appendChild(titleHeading);
+        
+        const closeSwitcherBtn = document.createElement('button');
+        closeSwitcherBtn.type = 'button';
+        closeSwitcherBtn.className = 'layer-switcher-close-btn';
+        closeSwitcherBtn.title = 'Fechar painel de camadas';
+
+        const closeImg = document.createElement('img');
+        closeImg.src = 'images/icons8-fechar-janela-48.png'; // Substitua pelo caminho correto do seu ícone
+        closeImg.alt = 'Fechar';
+        closeSwitcherBtn.appendChild(closeImg);
+    
+    // Ação ao clicar no botão (esconde o painel inteiro)
+        closeSwitcherBtn.onclick = function (e) {
+            if (e) e.stopPropagation();
+            const layerSwitcherEl = document.querySelector('.layer-switcher');
+            if (layerSwitcherEl) {
+                layerSwitcherEl.classList.remove('shown');
+            }
+        }
+        headerDiv.appendChild(closeSwitcherBtn);
+        const hr = document.createElement('hr');
+        hr.className = 'layer-switcher-divider';
+
+        panel.appendChild(headerDiv);
+        panel.appendChild(hr);
+        
+
+        const filterContainer = document.createElement('div');
+        filterContainer.className = 'layer-filter-container';
+        
+        const filterInput = document.createElement('input');
+        filterInput.type = 'text';
+        filterInput.placeholder = 'Filtrar Camadas...';
+        filterInput.className = 'layer-filter-input';
+        
+        // Funcionalidade de filtrar as camadas em tempo real ao digitar
+        filterInput.oninput = function(e) {
+        const query = e.target.value.toLowerCase().trim();
+        const items = panel.querySelectorAll('li.layer, li.group');
+
+            if (query === '') {
+                // Se a busca estiver vazia, restaura a exibição normal de todos os itens
+                items.forEach(function(item) {
+                    item.style.display = '';
+                });
+                return;
+            }
+
+            items.forEach(function(item) {
+                const label = item.querySelector('label');
+                let textMatch = '';
+                if (label) {
+                    textMatch = label.innerText.toLowerCase();
+                }
+
+                const matches = textMatch.includes(query);
+
+                if (matches) {
+                    // Se o item corresponde à busca, mostra ele e todos os seus filhos/subgrupos
+                    item.style.display = '';
+                    const childItems = item.querySelectorAll('li.layer, li.group');
+                    childItems.forEach(function(child) {
+                        child.style.display = '';
+                    });
+
+                    // Mostra também todos os grupos pais para manter a hierarquia visível
+                    let parent = item.parentElement;
+                    while (parent && parent !== panel) {
+                        if (parent.tagName === 'LI') {
+                            parent.style.display = '';
+                        }
+                        parent = parent.parentElement;
+                    }
+                } else {
+                    // Inicialmente oculta, a menos que um filho direto seja correspondido depois
+                    item.style.display = 'none';
+                }
+            });
+
+            // Segunda passada rápida para garantir que grupos com filhos visíveis também fiquem visíveis
+            items.forEach(function(item) {
+                if (item.classList.contains('group')) {
+                    const visibleChildren = item.querySelectorAll('li.layer:not([style*="display: none"]), li.group:not([style*="display: none"])');
+                    if (visibleChildren.length > 0) {
+                        item.style.display = '';
+                    }
+                }
+            });
+        };
+
+        const filterButton = document.createElement('button');
+        filterButton.type = 'button';
+        filterButton.innerHTML = 'images/icons8-pesquisar-cinza.svg'; // Ícone ou texto da lupa
+        filterButton.className = 'layer-filter-btn';
+        filterContainer.appendChild(filterInput);
+        filterContainer.appendChild(filterButton);
+        panel.appendChild(filterContainer);
+
+        // // 3. Subtítulo opcional antes das camadas
+        // const subTitle = document.createElement('p');
+        // subTitle.className = 'layer-switcher-subtitle';
+        // subTitle.innerText = 'TCC: Mapeamento do Potencial Geográfico Energético Solar no estado do Piauí';
+        // panel.appendChild(subTitle);
+
         const ul = document.createElement('ul');
         panel.appendChild(ul);
         // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
@@ -454,13 +548,40 @@ class LayerSwitcher extends Control {
         }
         else {
             li.className = 'layer';
+            // Verifica se o título possui legenda embutida pelo QGIS (contém <br>)
+            let lyrName = lyrTitle;
+            let legendaHtml = '';
+
+            if (lyrTitle && lyrTitle.includes('<br')) {
+                const partes = lyrTitle.split(/<br\s*[\/]?>/i);
+                lyrName = partes[0].trim(); // Apenas o nome limpo da camada
+                legendaHtml = partes.slice(1).join('<br>').trim(); // Apenas as imagens e valores da legenda
+            }
+
+            // Se for raster e tiver legenda, configura como grupo recolhível (fold)
+            // Se for raster e tiver legenda, configura como grupo recolhível (fold)
+            const isRaster = lyr instanceof ol.layer.Image || (lyr instanceof ol.layer.Tile && !(lyr.getSource() instanceof ol.source.OSM));
+            const UC_ICMBIO = (typeof lyr_reasdeconservaoICMBio_20 !== 'undefined' && lyr === lyr_reasdeconservaoICMBio_20);
+        
+            if ((isRaster || UC_ICMBIO) && legendaHtml !== '') {
+                if (!lyr.get('fold')) {
+                    lyr.set('fold', 'close'); // Inicia fechado por padrão
+                }
+                li.classList.add(CSS_PREFIX + 'fold', CSS_PREFIX + lyr.get('fold'));
+
+                const foldBtn = document.createElement('button');
+                foldBtn.type = 'button';
+                foldBtn.onclick = function (e) {
+                    const evt = e || window.event;
+                    LayerSwitcher.toggleFold_(lyr, li);
+                    evt.preventDefault();
+                };
+                li.appendChild(foldBtn);
+            }
+
+            // Input de seleção (Checkbox ou Radio)
             const input = document.createElement('input');
-            if (lyr.get('type') === 'base') {
-                input.type = 'radio';
-            }
-            else {
-                input.type = 'checkbox';
-            }
+            input.type = (lyr.get('type') === 'base') ? 'radio' : 'checkbox';
             input.id = checkboxId;
             input.checked = lyr.get('visible');
             input.indeterminate = lyr.get('indeterminate');
@@ -470,19 +591,33 @@ class LayerSwitcher extends Control {
                 render(lyr);
             };
             li.appendChild(input);
+
+            // Label contendo APENAS o título limpo
             label.htmlFor = checkboxId;
-            label.innerHTML = lyrTitle;
-            const rsl = map.getView().getResolution();
-            if (rsl >= lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
-                label.className += ' disabled';
-            }
-            else if (lyr.getMinZoom && lyr.getMaxZoom) {
-                const zoom = map.getView().getZoom();
-                if (zoom <= lyr.getMinZoom() || zoom > lyr.getMaxZoom()) {
-                    label.className += ' disabled';
-                }
-            }
+            label.innerHTML = lyrName;
             li.appendChild(label);
+
+            // Botão dos três pontos horizontais (...) usando a classe CSS
+            const menuDots = document.createElement('span');
+            menuDots.innerHTML = '&hellip;';
+            menuDots.title = 'Opções da camada';
+            menuDots.className = 'layer-options-dots';
+            menuDots.onclick = function (e) {
+                e.stopPropagation();
+                abrirPopupOpcoesCamada(e, lyr, lyrTitle);
+            };
+            li.appendChild(menuDots);
+
+            // Se houver legenda, criamos o container limpo associado à classe CSS
+            if (legendaHtml !== '') {
+                const legendUl = document.createElement('ul');
+                legendUl.className = 'layer-legend-container';
+                
+                const legendLi = document.createElement('li');
+                legendLi.innerHTML = legendaHtml;
+                legendUl.appendChild(legendLi);
+                li.appendChild(legendUl);
+            }
         }
         return li;
     }
@@ -521,16 +656,35 @@ class LayerSwitcher extends Control {
         });
     }
     /**
-     * **_[static]_** - Generate a UUID
-     * Adapted from http://stackoverflow.com/a/2117523/526860
-     * @returns {String} UUID
-     */
+    //  * **_[static]_** - Generate a UUID
+    //  * Adapted from http://stackoverflow.com/a/2117523/526860
+    //  * @param {ol.layer.Base} lyr 
+    //  * @returns {string} UUID
+    //  */
     static uuid() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             const r = (Math.random() * 16) | 0, v = c == 'x' ? r : (r & 0x3) | 0x8;
             return v.toString(16);
         });
     }
+    static obterUuidCamadaMGB(lyr) {
+        if (!lyr) return null;
+
+        // Verifica se a propriedade customizada já foi gravada na camada
+        if (!lyr.get('mgbMetadataUuid')) {
+            // Se não existir, utiliza a função estática uuid() existente para gerar um novo
+            const novoUuid = LayerSwitcher.uuid();
+            
+            // Grava permanentemente na camada para que nunca mais mude
+            lyr.set('mgbMetadataUuid', novoUuid);
+        }
+
+        // Retorna o UUID fixo daquela camada
+        return lyr.get('mgbMetadataUuid');
+
+    }
+    
+
     /**
      * Apply workaround to enable scrolling of overflowing content within an
      * element. Adapted from https://gist.github.com/chrismbarr/4107472
