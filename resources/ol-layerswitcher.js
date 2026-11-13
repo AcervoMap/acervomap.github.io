@@ -247,13 +247,13 @@ class LayerSwitcher extends Control {
         closeSwitcherBtn.type = 'button';
         closeSwitcherBtn.className = 'layer-switcher-close-btn';
         closeSwitcherBtn.title = 'Fechar painel de camadas';
+        closeSwitcherBtn.setAttribute('aria-label', 'Fechar painel de camadas');
 
         const closeImg = document.createElement('img');
-        closeImg.src = 'images/icons8-fechar-janela-48.png'; // Substitua pelo caminho correto do seu ícone
+        closeImg.src = 'images/icons8-fechar-janela-48.png'; 
         closeImg.alt = 'Fechar';
         closeSwitcherBtn.appendChild(closeImg);
     
-    // Ação ao clicar no botão (esconde o painel inteiro)
         closeSwitcherBtn.onclick = function (e) {
             if (e) e.stopPropagation();
             const layerSwitcherEl = document.querySelector('.layer-switcher');
@@ -340,11 +340,6 @@ class LayerSwitcher extends Control {
         filterContainer.appendChild(filterButton);
         panel.appendChild(filterContainer);
 
-        // // 3. Subtítulo opcional antes das camadas
-        // const subTitle = document.createElement('p');
-        // subTitle.className = 'layer-switcher-subtitle';
-        // subTitle.innerText = 'TCC: Mapeamento do Potencial Geográfico Energético Solar no estado do Piauí';
-        // panel.appendChild(subTitle);
 
         const ul = document.createElement('ul');
         panel.appendChild(ul);
@@ -548,7 +543,7 @@ class LayerSwitcher extends Control {
         }
         else {
             li.className = 'layer';
-            // Verifica se o título possui legenda embutida pelo QGIS (contém <br>)
+            
             let lyrName = lyrTitle;
             let legendaHtml = '';
 
@@ -558,8 +553,7 @@ class LayerSwitcher extends Control {
                 legendaHtml = partes.slice(1).join('<br>').trim(); // Apenas as imagens e valores da legenda
             }
 
-            // Se for raster e tiver legenda, configura como grupo recolhível (fold)
-            // Se for raster e tiver legenda, configura como grupo recolhível (fold)
+            
             const isRaster = lyr instanceof ol.layer.Image || (lyr instanceof ol.layer.Tile && !(lyr.getSource() instanceof ol.source.OSM));
             const UC_ICMBIO = (typeof lyr_reasdeconservaoICMBio_20 !== 'undefined' && lyr === lyr_reasdeconservaoICMBio_20);
         
@@ -579,7 +573,7 @@ class LayerSwitcher extends Control {
                 li.appendChild(foldBtn);
             }
 
-            // Input de seleção (Checkbox ou Radio)
+            
             const input = document.createElement('input');
             input.type = (lyr.get('type') === 'base') ? 'radio' : 'checkbox';
             input.id = checkboxId;
@@ -592,12 +586,12 @@ class LayerSwitcher extends Control {
             };
             li.appendChild(input);
 
-            // Label contendo APENAS o título limpo
+           
             label.htmlFor = checkboxId;
             label.innerHTML = lyrName;
             li.appendChild(label);
 
-            // Botão dos três pontos horizontais (...) usando a classe CSS
+            
             const menuDots = document.createElement('span');
             menuDots.innerHTML = '&hellip;';
             menuDots.title = 'Opções da camada';
@@ -608,7 +602,7 @@ class LayerSwitcher extends Control {
             };
             li.appendChild(menuDots);
 
-            // Se houver legenda, criamos o container limpo associado à classe CSS
+            
             if (legendaHtml !== '') {
                 const legendUl = document.createElement('ul');
                 legendUl.className = 'layer-legend-container';
@@ -672,10 +666,8 @@ class LayerSwitcher extends Control {
 
         // Verifica se a propriedade customizada já foi gravada na camada
         if (!lyr.get('mgbMetadataUuid')) {
-            // Se não existir, utiliza a função estática uuid() existente para gerar um novo
             const novoUuid = LayerSwitcher.uuid();
             
-            // Grava permanentemente na camada para que nunca mais mude
             lyr.set('mgbMetadataUuid', novoUuid);
         }
 
@@ -683,7 +675,6 @@ class LayerSwitcher extends Control {
         return lyr.get('mgbMetadataUuid');
 
     }
-    
 
     /**
      * Apply workaround to enable scrolling of overflowing content within an
