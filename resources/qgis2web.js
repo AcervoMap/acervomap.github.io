@@ -652,85 +652,130 @@ var bottomRightContainerDiv = document.getElementById('bottom-right-container')
 
 
 //measurement
+
 var measuring = false;
+var sketch;
+var helpTooltipElement;
+var helpTooltip;
+var measureTooltipElement;
+var measureTooltip;
 
-	const measureButton = document.createElement('button');
-	measureButton.className = 'measure-button fas fa-ruler';
-	measureButton.title = 'Measure';
+var formatLength = function (line) {
+    var length = ol.sphere.getLength(line);
+    var output;
+    if (length > 100) {
+        output = (Math.round((length / 1000) * 100) / 100) + ' km';
+    } else {
+        output = (Math.round(length * 100) / 100) + ' m';
+    }
+    return output;
+};
 
-	const measureControl = document.createElement('div');
-	measureControl.className = 'ol-unselectable ol-control measure-control';
-	measureControl.appendChild(measureButton);
-	map.getTargetElement().appendChild(measureControl);
+var formatArea = function (polygon) {
+    var area = ol.sphere.getArea(polygon);
+    if (area > 10000) {
+        output = Math.round((area / 1000000) * 100) / 100 + ' km²';
+    } else {
+        output = Math.round(area * 100) / 100 + ' m²';
+    }
+    return output;
+};
 
-	// Event handler
-	function handleMeasure() {
-	  if (!measuring) {
-		selectLabel.style.display = "";
-		map.addInteraction(draw);
-		createHelpTooltip();
-		createMeasureTooltip();
-		measuring = true;
-	  } else {
-		selectLabel.style.display = "none";
-		map.removeInteraction(draw);
-		map.removeOverlay(helpTooltip);
-		map.removeOverlay(measureTooltip);
-		const staticTooltips = document.getElementsByClassName("tooltip-static");
-		while (staticTooltips.length > 0) {
-		  staticTooltips[0].parentNode.removeChild(staticTooltips[0]);
-		}
-		measureLayer.getSource().clear();
-		sketch = null;
-		measuring = false;
-	  }
-	}
+const measureButton = document.createElement('button');
+measureButton.className = 'measure-button fas fa-ruler';
+measureButton.title = 'Measure';
+measureButton.setAttribute('aria-label', 'Ferramenta de medição');
 
-	measureButton.addEventListener('click', handleMeasure);
-	measureButton.addEventListener('touchstart', handleMeasure);
+const measureControl = document.createElement('div');
+measureControl.className = 'ol-unselectable ol-control measure-control';
+measureControl.appendChild(measureButton);
+map.getTargetElement().appendChild(measureControl);
 
-    map.on('pointermove', function(evt) {
-        if (evt.dragging) {
-            return;
-        }
-        if (measuring) {
-            /** @type {string} */
-            var helpMsg = 'Click to start drawing';
-            if (sketch) {
-                var geom = (sketch.getGeometry());
-                if (geom instanceof ol.geom.Polygon) {
-                    helpMsg = continuePolygonMsg;
-                } else if (geom instanceof ol.geom.LineString) {
-                    helpMsg = continueLineMsg;
-                }
-            }
-            helpTooltipElement.innerHTML = helpMsg;
-            helpTooltip.setPosition(evt.coordinate);
-        }
-    });
-    
 
-    var selectLabel = document.createElement("label");
-    selectLabel.innerHTML = "&nbsp;Measure:&nbsp;";
 
-    var typeSelect = document.createElement("select");
-    typeSelect.id = "type";
-
-    var measurementOption = [
-        { value: "LineString", description: "Length" },
-        { value: "Polygon", description: "Area" }
-        ];
-    measurementOption.forEach(function (option) {
-        var optionElement = document.createElement("option");
-        optionElement.value = option.value;
-        optionElement.text = option.description;
-        typeSelect.appendChild(optionElement);
-    });
-
-    selectLabel.appendChild(typeSelect);
-    measureControl.appendChild(selectLabel);
-
+// Event handler
+function handleMeasure() {
+  if (!measuring) {
+    selectLabel.style.display = "";
+    map.addInteraction(draw);
+    createHelpTooltip();
+    createMeasureTooltip();
+    measuring = true;
+  } else {
     selectLabel.style.display = "none";
+    map.removeInteraction(draw);
+    if (helpTooltip) map.removeOverlay(helpTooltip);
+    if (measureTooltip) map.removeOverlay(measureTooltip);
+    const staticTooltips = document.getElementsByClassName("tooltip-static");
+    while (staticTooltips.length > 0) {
+      staticTooltips[0].parentNode.removeChild(staticTooltips[0]);
+    }
+    measureLayer.getSource().clear();
+    sketch = null;
+    measuring = false;
+  }
+}
+
+measureButton.addEventListener('click', handleMeasure);
+measureButton.addEventListener('touchstart', handleMeasure);
+
+map.on('pointermove', function(evt) {
+    if (evt.dragging) {
+        return;
+    }
+    if (measuring) {
+        /** @type {string} */
+        var helpMsg = 'Click to start drawing';
+        if (sketch) {
+            var geom = (sketch.getGeometry());
+            if (geom instanceof ol.geom.Polygon) {
+                helpMsg = continuePolygonMsg;
+            } else if (geom instanceof ol.geom.LineString) {
+                helpMsg = continueLineMsg;
+            }
+        }
+        helpTooltipElement.innerHTML = helpMsg;
+        helpTooltip.setPosition(evt.coordinate);
+    }
+});
+
+var selectLabel = document.createElement("label");
+selectLabel.innerHTML = "&nbsp;Measure:&nbsp;";
+
+var typeSelect = document.createElement("select");
+typeSelect.id = "type";
+
+var measurementOption = [
+    { value: "LineString", description: "Length" },
+    { value: "Polygon", description: "Area" }
+    ];
+measurementOption.forEach(function (option) {
+    var optionElement = document.createElement("option");
+    optionElement.value = option.value;
+    optionElement.text = option.description;
+    typeSelect.appendChild(optionElement);
+});
+
+
+selectLabel.appendChild(typeSelect);
+measureControl.appendChild(selectLabel);
+selectLabel.style.display = "none";
+
+window.addEventListener('keydown', function(event) {
+    if (!measuring) return; 
+    if (event.key === 'Escape' || event.keyCode === 27) {
+        handleMeasure(); 
+    }
+    if (event.key === 'Enter' || event.keyCode === 13) {
+        if (draw) {
+            try {
+                draw.finishDrawing();
+            } catch (e) {
+                console.log("Erro ao finalizar o desenho com Enter:", e);
+            }
+        }
+    }
+});
 	/**
 	 * Currently drawn feature.
 	 * @type {ol.Feature}
@@ -1140,12 +1185,6 @@ if (btnMunicipio && inputMunicipio) {
     });
 }
 
-//layer search
-
-
-//scalebar
-
-
 //layerswitcher
 
 var layerSwitcher = new ol.control.LayerSwitcher({
@@ -1235,6 +1274,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (attributionControl) {
         bottomRightContainerDiv.appendChild(attributionControl);
     }
+
+//Acessibilidade para controles de zoom
+document.addEventListener("DOMContentLoaded", function() {
+    var zoomInBtn = document.querySelector('.ol-zoom-in');
+    var zoomOutBtn = document.querySelector('.ol-zoom-out');
+    
+    if (zoomInBtn) zoomInBtn.setAttribute('aria-label', 'Aproximar mapa');
+    if (zoomOutBtn) zoomOutBtn.setAttribute('aria-label', 'Afastar mapa');
+});
+
 
 //  Front buttons
 document.addEventListener("DOMContentLoaded", function () {
