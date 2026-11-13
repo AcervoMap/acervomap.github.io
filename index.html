@@ -6,6 +6,7 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="AcervoMAP: plataforma web para consulta, visualização e reutilização da produção cartográfica acadêmica da UFPI.">
         <link rel="stylesheet" href="./resources/ol.css">
         <link rel="stylesheet" href="resources/fontawesome-all.min.css">
         <link href="resources/photon-geocoder-autocomplete.min.css" rel="stylesheet">
@@ -66,8 +67,8 @@
                         
                     </section>
                     <section class="button-inf">
-                    <a class="btn-home" href="/Apresentacao/LandingPage.html"><i class="fas fa-home"></i></a>
-                    <button id="btn-ajuda" class="btn-ajuda" data-bs-toggle="modal" data-bs-target="#ajuda"><img src="/images/icons8-ajuda-100.png" alt=""> Ajuda</button>
+                    <a class="btn-home" href="/Apresentacao/LandingPage.html" title="Voltar a página inicial"><i class="fas fa-home" aria-label="Voltar para a página inicial"></i></a>
+                    <button id="btn-ajuda" class="btn-ajuda" data-bs-toggle="modal" data-bs-target="#ajuda" aria-label="menu de ajuda" title="Ajuda"><i class="fa fa-question-circle"></i></button>
 
                     <!-- https://getbootstrap.com/docs/5.3/components/modal/-->
                     <div class="modal fade" id="ajuda" tabindex="-1"  aria-hidden="true">
@@ -76,7 +77,6 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4>Ajuda</h4>
-                                    
                                 </div>
                                 <div class="modal-body">
                                     <!-- https://getbootstrap.com/docs/5.3/components/navs-tabs/ -->
@@ -112,7 +112,7 @@
                                                         <span>Voltar a página inicial</span>
                                                     </div>
                                                     <div class="ferramenta">
-                                                        <img src="/Apresentacao/images/OpenLayers.png" alt="">
+                                                        <img src="/Apresentacao/images/OpenLayers.png" alt="Controle de camadas" loading="lazy">
                                                         <span>Controle de camadas</span>
                                                     </div>
 
@@ -131,24 +131,24 @@
                                                 </nav>
                                             <div class="tab-content">
                                                 <div class="tab-pane fade show active" id="operacoes-tab-pane" role="tabpanel" aria-labelledby="operacoes-tab" tabindex="0">
-                                                    <img style="width: 100%; height: auto;" src="/Apresentacao/images/Operacoes.png" alt="">
+                                                    <img style="width: 100%; height: auto;" src="/Apresentacao/images/Operacoes.png" alt="Menu de operações sobre as camadas" loading="lazy">
                                                     <div class="barra-ferramentas">
                                                     
                                                         <div class="ferramenta" style="margin-top: 3%;">
-                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/metadado.png" alt="Metadado">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/metadado.png" alt="Metadado" loading="lazy" aria-hidden="true">
                                                             <span>Exibe o metadado associado à camada</span>
                                                             
                                                         </div>
                                                         <div class="ferramenta">
-                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/download.png" alt="Download">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/download.png" alt="Download" loading="lazy" aria-hidden="true">
                                                             <span>Permite o download em formato GeoTIFF (raster) ou SHP (vetor) da respectiva camada</span>
                                                         </div>
                                                         <div class="ferramenta">
-                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/URL_OGC.png" alt="Metadado">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/URL_OGC.png" alt="Metadado" loading="lazy" aria-hidden="true">
                                                             <span>Mostra a URL WMS (raster) ou WFS (vetor) da camada para fins de compartilhamento com outras plataformas</span>
                                                         </div>
                                                         <div class="ferramenta">
-                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/atributos.png" alt="Atributos">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/atributos.png" alt="Atributos" loading="lazy" aria-hidden="true">
                                                             <span>Permite consultar os dados alfanuméricos associados às feições geográficas e selecionar registros específicoS</span>
                                                         </div>
                                                         <div class="ferramenta">
@@ -166,15 +166,15 @@
                                                             <span>Este menu apresenta duas opções de pesquisa: <br> No primeiro digite o nome do municipio e ao clicar no botão de pesquisa, o mapa se desloca para a posição do local pesquisado e um marcador é exibido.
                                                             <br> No segundo, insira as coordenadas geográficas em graus decimais e ao clicar no botão de localizar, o mapa se desloca para a posição do local pesquisado e um marcado é exibido.</span>
                                                             </span>
-                                                            <img src="/Apresentacao/images/Pesquisa.png" alt="">
+                                                            <img src="/Apresentacao/images/Pesquisa.png" alt="Menu de pesquisa" loading="lazy" aria-hidden="true">
                                                         
                                                             <p class="title-submenu">Submenu de Recorte Espacial</p>
                                                             <span>Este menu apresenta duas opções principais para a extração de dados geoespaciais: <br> 
                                                             1. Desenhar Área: Utilize as ferramentas de desenho disponíveis na interface (como polígonos, linhas ou retângulos) para delimitar o perímetro de interesse diretamente sobre o mapa. Aplique a uma camada cadastrada na pltaforma e receba o recorte em formato GeoTIFF (raster) e GeoPackage (Vetor) <br> </span>
-                                                            <img src="/Apresentacao/images/recorte_raster_desenhar.png" alt="Recorte Espacial por Desenho">
+                                                            <img src="/Apresentacao/images/recorte_raster_desenhar.png" alt="Recorte Espacial por Desenho" loading="lazy" aria-hidden="true">
 
                                                             <span>2. Importar por Arquivo: Envie um arquivo vetorial compatível (como Shapefile, KML ou KMZ) para realizar o recorte dos dados em áreas que interseccionam este arquivo.</span>
-                                                            <img src="/Apresentacao/images/Recorte_desenhar.png" alt="Recorte Espacial por Arquivo">
+                                                            <img src="/Apresentacao/images/Recorte_desenhar.png" alt="Recorte Espacial por Arquivo" loading="lazy" aria-hidden="true">
 
                                                             <p class="title-submenu">Submenu de Dados Externos</p>
                                                             <span>Permite integrar e visualizar fontes de dados externos e geoserviços no portal: <br> 
@@ -209,20 +209,20 @@
                     <ul>
                         <li> 
                             <a href="#">
-                                <img src="images/icons8-pesquisar.svg" alt="" style="width: 50%; height: 50%; margin-bottom: 20%;">
+                                <img src="images/icons8-pesquisar.svg" alt="" style="width: 50%; height: 50%; margin-bottom: 20%;" aria-hidden="true">
                                 <span class="text-menu">Pesquisar </span>
                             </a>
                         </li>
                         <li> 
                             <a href="#">
-                                <img src="images/icons8-recortar-100.png" alt="" style="width: 40%; height: 40%; margin-bottom: 20%;">
+                                <img src="images/icons8-recortar-100.png" alt="" style="width: 40%; height: 40%; margin-bottom: 20%;" aria-hidden="true">
                                 <span class="text-menu">Recorte espacial </span>
                             </a>  
                             
                         </li>
                         <li> 
                             <a href="#">
-                                <img src="images/icons8-globo-100.png" alt="" style="width: 50%; height: 50%; margin-bottom: 20%;">
+                                <img src="images/icons8-globo-100.png" alt="" style="width: 50%; height: 50%; margin-bottom: 20%;" aria-hidden="true">
                                 <span class="text-menu"> Dados externos </span>
                             </a>
                         </li>
@@ -230,14 +230,14 @@
                 </nav>
                 <div id="sub-menu-pesquisar" class="sub-menu">
                         <div class="titulo_sub-menu">
-                            <img src="images/icons8-pesquisar-cinza.svg" alt="" style="width: 8%; height: 8%; margin-right: 5%;">
+                            <img src="images/icons8-pesquisar-cinza.svg" alt="" style="width: 8%; height: 8%; margin-right: 5%;" loading="lazy" aria-hidden="true">
                             <span style="display: flex; flex-shrink: 1;">Pesquisar </span>
-                            <button id="btn-fechar-sub-menu-pesquisar" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt=""></button>
+                            <button id="btn-fechar-sub-menu-pesquisar" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt="" aria-label="Fechar sub-menu"></button>
                         </div>
                         <p class="titulo_item_sub-menu">Localização por município ou por coordenadas geográficas <br> <br> Município </p> 
                         <div id="busca-municipio-container">
                         <input id="input-municipio" class="campo" placeholder="Digite o nome do Municipio">
-                        <button id="btn-municipio" class="button_campo"> <img src="images/icons8-pesquisar.svg" alt="" style="width: 7%; height: 7%;">
+                        <button id="btn-municipio" class="button_campo"> <i class="fa fa-search"></i>
                             <span>Pesquisar </span>
                         </button>
                         </div>                               
@@ -251,15 +251,15 @@
                             <p class="titulo_item_sub-menu">Longitude</p>
                             <input id="input-long" class="campo" placeholder="">
                         </div>
-                        <button id="btn-localizar" class="button_campo"> <img src="images/icons8-localização-64.png" alt="" style="width: 7%; height: 7%;">
+                        <button id="btn-localizar" class="button_campo"> <i class="fa fa-map-marker-alt"></i>
                             <span>Localizar</span>
                         </button>
                 </div>
                 <div id="sub-menu-recorte" class="sub-menu">
                     <div class="titulo_sub-menu">
-                        <img src="images/icons8-recortar-preto.png" alt="" style="width: 8%; height: 8%; margin-right: 5%;">
+                        <img src="images/icons8-recortar-preto.png" alt="" style="width: 8%; height: 8%; margin-right: 5%;" loading="lazy" aria-hidden="true">
                         <span style="display: flex; flex-shrink: 1;">Recorte espacial </span>
-                        <button id="btn-fechar-sub-menu-recorte" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt=""></button>
+                        <button id="btn-fechar-sub-menu-recorte" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt="Botão para fechar" aria-label="fechar" loading="lazy"></button>
                     </div>
                     <p class="titulo_item_sub-menu"><br> Defina uma área de interesse para realizar operações de recorte espacial</p> 
                     <div class="container-tab">
@@ -290,7 +290,7 @@
                                     <select id="select-recorte" class="campo">
                                         <option value="">Selecione uma camada...</option>
                                     </select>
-                                    <button id="btn-executar-recorte" class="button_campo"> <img src="images/icons8-recortar-100.png" alt="" style="width: 7%; height: 7%;">  
+                                    <button id="btn-executar-recorte" class="button_campo"> <i class="fa fa-cut" aria-hidden="true"></i>  
                                         <span> Recortar </span>
                                 </button>
                         </div>
@@ -303,7 +303,7 @@
                                     <select id="select-recorte-arquivo" class="campo">
                                         <option value="">Selecione uma camada...</option>
                                     </select>
-                                    <button id="btn-executar-recorte-arquivo" class="button_campo"> <img src="images/icons8-recortar-100.png" alt="" style="width: 7%; height: 7%;">  
+                                    <button id="btn-executar-recorte-arquivo" class="button_campo"> <i class="fa fa-cut" aria-hidden="true"></i>  
                                         <span> Recortar </span>
                                     </button>
                                 </div>
@@ -315,9 +315,9 @@
                 </div>
                 <div id="sub-menu-externo" class="sub-menu">
                         <div class="titulo_sub-menu">
-                            <img src="images/icons8-globo-preto.png" alt="" style="width: 8%; height: 8%; margin-right: 5%;">
+                            <img src="images/icons8-globo-preto.png" alt="" style="width: 8%; height: 8%; margin-right: 5%;" aria-hidden="true">
                             <span style="display: flex; flex-shrink: 1;"> Dados externos </span>
-                            <button id="btn-fechar-sub-menu-externo" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt=""></button>
+                            <button id="btn-fechar-sub-menu-externo" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt="Fechar"></button>
                         </div>
                         <p class="titulo_item_sub-menu">Buscar camadas <br> </p>
                             <p> <br> Selecione a instituição </p> 
@@ -327,7 +327,7 @@
                                 <option value="IBAMA">Instito Brasileiro do Meio Ambiente e dos Recursos Renováveis (IBAMA) </option>
                                 <option value="IBGE"> Instituto Brasileiro de Geográfia e Estatística (IBGE)</option>
                             </select>
-                            <button id="btn-externo" class="button_campo"> <img src="images/icons8-pesquisar.svg" alt="" style="width: 7%; height: 7%;">
+                            <button id="btn-externo" class="button_campo"> <i class="fa fa-search" aria-hidden="true"></i>
                                 <span>Pesquisar </span>
                             </button>
                         <div id="div-camadas-wms" style="display: none; margin-top: 15px;">
@@ -340,7 +340,7 @@
                         <div class="separador"></div>
                         <p> <br> URL WMS </p> 
                         <input id="input-url-wms" class="campo" placeholder="url wms da camada">
-                        <button id="btn-url-wms" class="button_campo" > <i class="fas fa-plus"></i>
+                        <button id="btn-url-wms" class="button_campo" > <i class="fas fa-plus" aria-hidden="true"></i>
                             <span>Adicionar</span>
                         </button>
                 </div>
@@ -351,12 +351,12 @@
                     </div>
                     <div class="popup-camada-opcoes-content">
                         <div class="operacoes">
-                            <button id="btn-metadado" title="Exibir Metadados (PDF)"><i class="fas fa-file-pdf"></i></button>
-                            <button id="btn-tabela-atributos" title="Exibir Tabela de Atributos"><i class="fas fa-table"></i></button>                      
-                            <button id="btn-wms" title="Copiar Link WMS"><i class="fas fa-link"></i></button>
-                            <button id="btn-wfs" title="Copiar Link WFS"><i class="fas fa-link"></i></button>
-                            <button id="btn-download-vetor" title="Download Shapefile/GeoPackage"><i class="fas fa-download"></i></button>
-                            <button id="btn-download-raster" title="Download Geotiff"><i class="fas fa-file-archive"></i></button>
+                            <button id="btn-metadado" title="Exibir Metadados (PDF)"><i class="fas fa-file-pdf" aria-label="Metadado"></i></button>
+                            <button id="btn-tabela-atributos" title="Exibir Tabela de Atributos"><i class="fas fa-table" aria-label="Tabela de atributos"></i></button>                      
+                            <button id="btn-wms" title="Copiar Link WMS"><i class="fas fa-link" aria-label="Link WMS da camada"></i></button>
+                            <button id="btn-wfs" title="Copiar Link WFS"><i class="fas fa-link" aria-label="Link WFS da camada"></i></button>
+                            <button id="btn-download-vetor" title="Download Shapefile/GeoPackage"><i class="fas fa-download" aria-label="Download Shapefile/GeoPackage"></i></button>
+                            <button id="btn-download-raster" title="Download Geotiff"><i class="fas fa-file-archive" aria-label="Download GeoTIFF"></i></button>
                         </div>
                         <div class="opacidade">
                             <label for="controle-opacidade">Opacidade</label>
