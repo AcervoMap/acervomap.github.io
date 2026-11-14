@@ -1,6 +1,7 @@
 html, body {
     height: 100%;
     padding: 0;
+    width: 100%;
     margin: 0;
     font-family: 'Times New Roman', Times, serif !important;
     font-size: small;
@@ -40,17 +41,14 @@ main{
     height: 93.4% !important;
     min-height: fit-content;
 }
-#map {
+#map{
     width: 100% !important;
-    height: 100vh;
     display: flex !important;
     position: relative !important;
     min-height: auto;
 }
 
-.sidebar, .sub-menu, li, span.text-menu {
-    box-sizing: border-box;
-}
+
 .ol-custom-overviewmap,
 .ol-custom-overviewmap.ol-uncollapsible {
         position: absolute !important;    
@@ -78,19 +76,6 @@ main{
         left: auto;
         right: 1px;
         top: 1px;
-}
-.ol-overlaycontainer-stopevent {
-    position: absolute !important;
-    top: 0;
-    left: 0;
-    width: 100% !important;
-    height: 100% !important;
-    pointer-events: none; /* Evita interferência de cliques antes de carregar */
-}
-
-/* 3. Permite eventos apenas nos controles internos reais (botões, zoom, etc) */
-.ol-overlaycontainer-stopevent > div {
-    pointer-events: auto;
 }
 
 .north-icon { 
@@ -304,7 +289,9 @@ header {
     background-color: #f8f8f8e8;
     width: 20%;
 }
-
+.sidebar, .sub-menu, li, span.text-menu {
+    box-sizing: border-box;
+}
 .titulo_sub-menu{
     display: flex;
     align-items: center;
@@ -865,6 +852,10 @@ td video {
     box-sizing: unset;
     padding: 2%;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+
 }
 
 .layer-switcher.shown{
