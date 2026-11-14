@@ -6,6 +6,34 @@ html, body {
     font-size: small;
 }
 
+#page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #1b3a41;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    transition: opacity 0.5s ease;
+}
+
+@keyframes girar {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner-logo {
+    animation: girar 2s linear infinite;
+    object-fit: contain;
+}
+
 main{
     display: flex !important;
     width: 100% !important;
@@ -1323,6 +1351,7 @@ td video {
     white-space: nowrap;
     pointer-events: none;
 }
+
 @media (max-width: 1100px) {
     main {
         display: flex !important;
