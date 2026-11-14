@@ -35,21 +35,14 @@
             background-color: rgba(255,255,255,.4) !important;
             padding: 2px !important;
         } 
-        </style>
-
-        <style>
         html, body, #map {
             width: 100%;
             height: 100%;
             padding: 0;
             margin: 0;
         }
-        sidebar, .sub-menu {
-            opacity: 0;
-            visibility: hidden;
-        }
-
         </style>
+
         <title>UFPI AcervoMAP</title>
     </head>
     <body>
@@ -1044,13 +1037,7 @@
                     if (mapaLiberado) return;
                     mapaLiberado = true;
                     clearTimeout(timeoutId);
-
-                    const elementosOcultos = document.querySelectorAll('.sidebar, .sub-menu');
-                    elementosOcultos.forEach(el => {
-                        el.style.opacity = '1';
-                        el.style.visibility = 'visible';
-                    });
-
+                    
                     setTimeout(function() {
                         removerLoadingCompletamente();
                     }, 600);
