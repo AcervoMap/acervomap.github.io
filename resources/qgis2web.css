@@ -10,12 +10,14 @@ main{
     display: flex !important;
     width: 100% !important;
     height: 93.4% !important;
+    min-height: fit-content;
 }
 #map {
     width: 100% !important;
-    height: auto !important;
+    height: 100vh;
     display: flex !important;
     position: relative !important;
+    min-height: auto;
 }
 .ol-custom-overviewmap,
 .ol-custom-overviewmap.ol-uncollapsible {
@@ -80,22 +82,15 @@ header {
 }
 
 .brasao {
-    width: 28px;
-    height: auto;
     margin-left: 5px;
+    object-fit: contain;
 }
 
 .GeoInova {
-    height: 42px; 
-    width: auto; 
     background: #fff; 
     border-radius: 8px; 
     padding: 2px 6px; 
-}
-
-.logo_SIGWEB {
-    width: 36px;
-    height: auto;
+    object-fit: contain;
 }
 
 .separador-header {
@@ -1056,7 +1051,6 @@ td video {
     cursor: pointer;
 }
 
-/* Container principal da Tabela de Atributos */
 .atributos-container {
     position: absolute;
     bottom: 0;
@@ -1071,7 +1065,6 @@ td video {
     font-family: Arial, sans-serif;
     font-size: 12px;
 }
-
 
 .btn-fechar-tabela {
     background: none;
@@ -1098,7 +1091,6 @@ td video {
     font-family: 'Times New Roman', Times, serif;
     font-size: 13px;
 }
-
 
 #map.tabela-ativa {
     height: 73%;
@@ -1171,7 +1163,6 @@ td video {
     font-family: Arial, sans-serif;
 }
 
-/* Caixa de Conteúdo do Modal */
 .url-content {
     background: #ffffff;
     width: 500px;
@@ -1183,7 +1174,6 @@ td video {
     flex-direction: column;
 }
 
-/* Cabeçalho */
 .url-header {
     background: #f8f9fa;
     padding: 1.5%;
@@ -1209,7 +1199,6 @@ td video {
     color: #000;
 }
 
-/* Corpo com o campo de input */
 .url-body {
     padding: 20px;
 }
@@ -1322,7 +1311,6 @@ td video {
     box-sizing: border-box;
 }
 
-/* Coordenadas no rodape*/
 .coordenadas_rodape {
     color: #0078A8;
     font-family: 'Times New Roman', Times, serif;
@@ -1336,7 +1324,6 @@ td video {
     pointer-events: none;
 }
 @media (max-width: 1100px) {
-    /* Mantém o layout flexível na horizontal e força a largura do sidebar para cerca de 10% */
     main {
         display: flex !important;
         flex-direction: row !important;
