@@ -53,6 +53,13 @@
         <title>UFPI AcervoMAP</title>
     </head>
     <body>
+       <div id="page-loader">
+            <img src="images/Emblema-AcervoMap-UFPI.webp" alt="Carregando AcervoMAP" class="spinner-logo" width="100" height="100">
+            <div style="display: flex;" class="titulo_pag">
+                                <h2 style="color: #f8f8f8;"> UFPI Acervo</h2>
+                                <h2 style="color: #FFCC33;"> MAP</h2>
+            </div>
+        </div>
         <header>
                 <div class="cabecalho">
                     <section class="logo">
@@ -1009,15 +1016,35 @@
         <script src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist/geotiff.min.js"></script>
         <script>
             window.addEventListener('DOMContentLoaded', function() {
-                // Aguarda um microssegundo para o OpenLayers estabilizar e reativa a visibilidade suavemente
                 setTimeout(function() {
                     const elementosOcultos = document.querySelectorAll('sidebar, .sub-menu');
                     elementosOcultos.forEach(el => {
                         el.style.opacity = '1';
                         el.style.visibility = 'visible';
                     });
-                }, 150); // 150 milissegundos de espera invisível ao usuário
+                }, 300);
             });
+
+            window.addEventListener('DOMContentLoaded', function() {
+    
+                const tempoLimite = setTimeout(removerLoading, 1500);
+
+                
+                window.addEventListener('load', function() {
+                    clearTimeout(tempoLimite);
+                    removerLoading();
+                });
+            });
+
+            function removerLoading() {
+                const loader = document.getElementById('page-loader');
+                if (loader && loader.style.display !== 'none') {
+                    loader.style.opacity = '0';
+                    setTimeout(function() {
+                        loader.style.display = 'none';
+                    }, 400); 
+                }
+            }
         </script>
     </body>
 </html>
