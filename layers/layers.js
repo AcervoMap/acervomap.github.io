@@ -530,18 +530,18 @@ var lyr_usinas_foto_editado_15 = new ol.layer.Vector({
 lyr_usinas_foto_editado_15.set('mgbMetadataUuid', '9f008251-8f9b-4508-b692-90d9a315e047');
 
 
-var lyr_CadastroAmbientalRuralCAR_16 = new ol.layer.Tile({ // Alterado de Image para Tile
+var lyr_CadastroAmbientalRuralCAR_16 = new ol.layer.Tile({ 
     metadadoUrl: 'metadado/car_atualizado.pdf',
     title: '<img src="styles/legend/CadastroAmbientalRuralCAR_16.png" /> Cadastro Ambiental Rural (CAR)',
     minZoom: 10, 
     opacity: 1.0,
     visible: false, 
     popuplayertitle: 'Cadastro Ambiental Rural (CAR)',
-    source: new ol.source.TileWMS({ // Alterado de ImageWMS para TileWMS
+    source: new ol.source.TileWMS({ 
         url: 'https://geoserver-sigweb.duckdns.org/geoserver/wms',
         params: {
             'LAYERS': 'sigweb:car_piaui_completo', 
-            'TILED': true, // Parâmetro obrigatório para TileWMS
+            'TILED': true, 
             'FORMAT': 'image/png',
             'TRANSPARENT': false
         },
@@ -558,7 +558,7 @@ var lyr_SistemadeGestoFundiriaSIGEF_17 = new ol.layer.Image({
     metadadoUrl: 'metadado/SIGEF.pdf',
     title: '<img src="styles/legend/SistemadeGestoFundiriaSIGEF_17.png" /> Sistema de Gestão Fundiária (SIGEF)',
     opacity: 1.0,
-    visible: false, // Pode alterar para true se quiser que inicie ligada
+    visible: false,
     popuplayertitle: 'Sistema de Gestão Fundiária (SIGEF)',
     source: new ol.source.ImageWMS({
         url: 'https://geoserver-sigweb.duckdns.org/geoserver/wms',
@@ -1019,6 +1019,32 @@ fetchWFSBrasil_29Data(lyr_Brasil_29.get('title'), function (error, response) {
     }
 });
 lyr_Brasil_29.set('mgbMetadataUuid', 'c882d2ba-b7cf-4b91-b122-8cf1e5161a66');
+
+//Melhorar desempenho
+function garantirCarregamentoWFS(layer, source, fetchFunction, formatador) {
+    if (source.getFeatures().length === 0 && !layer.get('carregandoDados')) {
+        layer.set('carregandoDados', true);
+        console.log("Baixando dados sob demanda para:", layer.get('title'));
+        
+        fetchFunction(layer.get('title'), function (error, response) {
+            if (error) {
+                console.error("Erro ao carregar:", error);
+                return;
+            }
+            try {
+                var features = formatador.readFeatures(response, {
+                    dataProjection: 'EPSG:3857',
+                    featureProjection: map.getView().getProjection()
+                });
+                if (features && features.length > 0) {
+                    source.addFeatures(features);
+                }
+            } catch (e) {
+                console.error("Erro no parsing:", e);
+            }
+        });
+    }
+}
 
 var group_Limites = new ol.layer.Group({
                                 layers: [lyr_Piau_27,lyr_MunicpiosPiau_28,lyr_Brasil_29,],
