@@ -44,6 +44,11 @@
             padding: 0;
             margin: 0;
         }
+        sidebar, .sub-menu {
+            opacity: 0;
+            visibility: hidden;
+        }
+
         </style>
         <title>UFPI AcervoMAP</title>
     </head>
@@ -1002,6 +1007,17 @@
         <script src="https://cdn.jsdelivr.net/npm/geotiff@2/dist/geotiff.bundle.js"></script>
         <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist/geotiff.min.js"></script>
-        
+        <script>
+            window.addEventListener('DOMContentLoaded', function() {
+                // Aguarda um microssegundo para o OpenLayers estabilizar e reativa a visibilidade suavemente
+                setTimeout(function() {
+                    const elementosOcultos = document.querySelectorAll('sidebar, .sub-menu');
+                    elementosOcultos.forEach(el => {
+                        el.style.opacity = '1';
+                        el.style.visibility = 'visible';
+                    });
+                }, 150); // 150 milissegundos de espera invisível ao usuário
+            });
+        </script>
     </body>
 </html>
