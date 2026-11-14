@@ -90,6 +90,8 @@ class LayerSwitcher extends Control {
         this.shownClassName = 'shown';
         element.className = this.hiddenClassName;
         this.button = document.createElement('button');
+        this.button.setAttribute('aria-label', 'Abrir painel de camadas');
+        this.button.title = 'Abrir painel de camadas';
         element.appendChild(this.button);
         this.panel = document.createElement('div');
         this.panel.className = 'panel';
@@ -277,13 +279,11 @@ class LayerSwitcher extends Control {
         filterInput.placeholder = 'Filtrar Camadas...';
         filterInput.className = 'layer-filter-input';
         
-        // Funcionalidade de filtrar as camadas em tempo real ao digitar
         filterInput.oninput = function(e) {
         const query = e.target.value.toLowerCase().trim();
         const items = panel.querySelectorAll('li.layer, li.group');
 
             if (query === '') {
-                // Se a busca estiver vazia, restaura a exibição normal de todos os itens
                 items.forEach(function(item) {
                     item.style.display = '';
                 });
@@ -300,14 +300,12 @@ class LayerSwitcher extends Control {
                 const matches = textMatch.includes(query);
 
                 if (matches) {
-                    // Se o item corresponde à busca, mostra ele e todos os seus filhos/subgrupos
                     item.style.display = '';
                     const childItems = item.querySelectorAll('li.layer, li.group');
                     childItems.forEach(function(child) {
                         child.style.display = '';
                     });
 
-                    // Mostra também todos os grupos pais para manter a hierarquia visível
                     let parent = item.parentElement;
                     while (parent && parent !== panel) {
                         if (parent.tagName === 'LI') {
@@ -316,12 +314,10 @@ class LayerSwitcher extends Control {
                         parent = parent.parentElement;
                     }
                 } else {
-                    // Inicialmente oculta, a menos que um filho direto seja correspondido depois
                     item.style.display = 'none';
                 }
             });
 
-            // Segunda passada rápida para garantir que grupos com filhos visíveis também fiquem visíveis
             items.forEach(function(item) {
                 if (item.classList.contains('group')) {
                     const visibleChildren = item.querySelectorAll('li.layer:not([style*="display: none"]), li.group:not([style*="display: none"])');
@@ -334,7 +330,6 @@ class LayerSwitcher extends Control {
 
         const filterButton = document.createElement('button');
         filterButton.type = 'button';
-        filterButton.innerHTML = 'images/icons8-pesquisar-cinza.svg'; // Ícone ou texto da lupa
         filterButton.className = 'layer-filter-btn';
         filterContainer.appendChild(filterInput);
         filterContainer.appendChild(filterButton);
@@ -343,7 +338,6 @@ class LayerSwitcher extends Control {
 
         const ul = document.createElement('ul');
         panel.appendChild(ul);
-        // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
         LayerSwitcher.renderLayers_(map, map, ul, options, function render(_changedLyr) {
             LayerSwitcher.renderPanel(map, panel, options);
         });
@@ -730,6 +724,7 @@ class LayerSwitcher extends Control {
             ? groupSelectStyle
             : 'children';
     }
+
 }
 // Expose LayerSwitcher as ol.control.LayerSwitcher if using a full build of
 // OpenLayers
