@@ -214,26 +214,26 @@
                     <ul>
                         <li> 
                             <a href="#">
-                                <img src="images/icons8-pesquisar.svg" alt="" style="width: 50%; height: 50%; margin-bottom: 20%;" aria-hidden="true">
+                                <img src="images/icons8-pesquisar.svg" alt="Pesquisar" width="24" height="24" style="margin-bottom: 4px;" aria-hidden="true" >
                                 <span class="text-menu">Pesquisar </span>
                             </a>
                         </li>
                         <li> 
                             <a href="#">
-                                <img src="images/icons8-recortar-100.png" alt="" style="width: 40%; height: 40%; margin-bottom: 20%;" aria-hidden="true">
-                                <span class="text-menu">Recorte espacial </span>
+                                <img src="images/icons8-recortar-100.png" alt="Recorte espacial" width="24" height="24" style="margin-bottom: 4px;" aria-hidden="true">
+                                <span class="text-menu">Recorte espacial</span>
                             </a>  
                             
                         </li>
                         <li> 
                             <a href="#">
-                                <img src="images/icons8-globo-100.png" alt="" style="width: 50%; height: 50%; margin-bottom: 20%;" aria-hidden="true">
-                                <span class="text-menu"> Dados externos </span>
+                                <img src="images/icons8-globo-100.png" alt="Dados externos" width="24" height="24" style="margin-bottom: 4px;" aria-hidden="true">
+                                <span class="text-menu">Dados externos</span>
                             </a>
                         </li>
                     </ul>
                 </nav>
-                <div id="sub-menu-pesquisar" class="sub-menu">
+                <div id="sub-menu-pesquisar" class="sub-menu" style="display: none;">
                         <div class="titulo_sub-menu">
                             <img src="images/icons8-pesquisar-cinza.svg" alt="" style="width: 8%; height: 8%; margin-right: 5%;" loading="lazy" aria-hidden="true">
                             <span style="display: flex; flex-shrink: 1;">Pesquisar </span>
@@ -260,7 +260,7 @@
                             <span>Localizar</span>
                         </button>
                 </div>
-                <div id="sub-menu-recorte" class="sub-menu">
+                <div id="sub-menu-recorte" class="sub-menu" style="display: none;">
                     <div class="titulo_sub-menu">
                         <img src="images/icons8-recortar-preto.png" alt="" style="width: 8%; height: 8%; margin-right: 5%;" loading="lazy" aria-hidden="true">
                         <span style="display: flex; flex-shrink: 1;">Recorte espacial </span>
@@ -318,7 +318,7 @@
                     </div>
 
                 </div>
-                <div id="sub-menu-externo" class="sub-menu">
+                <div id="sub-menu-externo" class="sub-menu" style="display: none;">
                         <div class="titulo_sub-menu">
                             <img src="images/icons8-globo-preto.png" alt="" style="width: 8%; height: 8%; margin-right: 5%;" aria-hidden="true">
                             <span style="display: flex; flex-shrink: 1;"> Dados externos </span>
@@ -401,8 +401,8 @@
                         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
                         <div id="popup-content"></div>
                     </div>
-            </div>
-        </main>  
+                </div>
+            </main>  
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         <script src="resources/qgis2web_expressions.js"></script>
@@ -1009,52 +1009,55 @@
         <script src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist/geotiff.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+    // Tempo máximo de segurança caso o GeoServer demore a responder na web
                 const tempoLimiteSeguranca = setTimeout(function() {
-                    liberarInterfaceCompletamente();
-                }, 5000);
+                    liberarInterface();
+                }, 6000);
 
                 if (typeof map !== 'undefined' && map !== null) {
-                    monitorarCarregamentoMapa(tempoLimiteSeguranca);
+                    sincronizarCarregamentoWeb(tempoLimiteSeguranca);
                 } else {
                     let tentativas = 0;
                     const checarMapa = setInterval(function() {
                         tentativas++;
                         if (typeof map !== 'undefined' && map !== null) {
                             clearInterval(checarMapa);
-                            monitorarCarregamentoMapa(tempoLimiteSeguranca);
-                        } else if (tentativas > 30) { 
+                            sincronizarCarregamentoWeb(tempoLimiteSeguranca);
+                        } else if (tentativas > 40) { 
                             clearInterval(checarMapa);
-                            liberarInterfaceCompletamente();
+                            liberarInterface();
                         }
                     }, 100);
                 }
             });
 
-            function monitorarCarregamentoMapa(timeoutId) {
-                let mapaLiberado = false;
+            function sincronizarCarregamentoWeb(timeoutId) {
+                let liberado = false;
 
-                function finalizar() {
-                    if (mapaLiberado) return;
-                    mapaLiberado = true;
+                function finalizarCarga() {
+                    if (liberado) return;
+                    liberado = true;
                     clearTimeout(timeoutId);
                     
+                    // Garante um respiro milimétrico para o canvas establicizar o buffer de vídeo na web
                     setTimeout(function() {
-                        removerLoadingCompletamente();
-                    }, 600);
+                        liberarInterface();
+                    }, 300);
                 }
 
+                // O OpenLayers dispara 'rendercomplete' apenas quando a camada e o canvas estão 100% prontos
                 map.once('rendercomplete', function() {
-                    setTimeout(finalizar, 400);
+                    finalizarCarga();
                 });
             }
 
-            function removerLoadingCompletamente() {
+            function liberarInterface() {
                 const loader = document.getElementById('page-loader');
                 if (loader && loader.style.display !== 'none') {
                     loader.style.opacity = '0';
                     setTimeout(function() {
                         loader.style.display = 'none';
-                    }, 500); 
+                    }, 500);
                 }
             }
         </script>
