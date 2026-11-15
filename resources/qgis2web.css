@@ -5,6 +5,7 @@ html, body {
     margin: 0;
     font-family: 'Times New Roman', Times, serif !important;
     font-size: small;
+    overflow: hidden;
 }
 
 #page-loader {
@@ -31,7 +32,7 @@ html, body {
 }
 
 .spinner-logo {
-    animation: girar 2s linear infinite;
+    animation: girar 4s linear infinite;
     object-fit: contain;
 }
 
@@ -39,36 +40,49 @@ main{
     display: flex !important;
     width: 100% !important;
     height: 93.4% !important;
-    min-height: fit-content;
+    box-sizing: border-box;
 }
-#map{
+
+#map {
     width: 100% !important;
-    display: flex !important;
-    position: relative !important;
-    min-height: auto;
+    box-sizing: border-box !important;
+    contain: layout size style;
 }
-
-
+div.ol-viewport {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    contain: layout style;
+}
+div.ol-unselectable.ol-layers,
+div.ol-layer {
+    width: 100% !important;
+    height: 100% !important;
+    contain: layout style;
+}
 .ol-custom-overviewmap,
 .ol-custom-overviewmap.ol-uncollapsible {
         position: absolute !important;    
         bottom: 5%;
         left: auto !important;
         right: 1%;
+         contain: layout style;
 }
 
 .ol-custom-overviewmap:not(.ol-collapsed)  {
         border: 1px solid black;
         background: white;
+         contain: layout style;
 }
 
 .ol-custom-overviewmap .ol-overviewmap-map {
         border: none;
         width: 300px;
+         contain: layout style;
 }
 
 .ol-custom-overviewmap .ol-overviewmap-box {
         border: 1.5px solid red;
+         contain: layout style;
 }
 
 .ol-custom-overviewmap:not(.ol-collapsed) button{
@@ -76,6 +90,7 @@ main{
         left: auto;
         right: 1px;
         top: 1px;
+        contain: layout style;
 }
 
 .north-icon { 
@@ -176,7 +191,7 @@ header {
     justify-content: center;
     flex-wrap: nowrap;
     white-space: nowrap;
-    width: auto;
+    width: 34px;
     height: 34px;
     gap: 6px;
     margin: 0;
@@ -257,6 +272,11 @@ header {
     align-items: center;
 }
 
+#sidebar ul li, nav#sidebar li {
+    min-height: 48px !important;
+    box-sizing: border-box;
+}
+
 #sidebar ul li a {
     display: flex;
     flex-direction: column;
@@ -289,8 +309,53 @@ header {
     background-color: #f8f8f8e8;
     width: 20%;
 }
-.sidebar, .sub-menu, li, span.text-menu {
+.ol-overlaycontainer-stopevent {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none;
+    contain: layout size style; /* Força o navegador a calcular o layout de forma independente */
+}
+
+
+#sidebar img, .sidebar img, .sub-menu img, nav img {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    max-width: 24px !important;
+    max-height: 24px !important;
+    object-fit: contain;
+}
+
+
+/* 3. Aplica o mesmo rigor de tamanho fixo dos elementos do mobile aos menus do desktop */
+#sidebar, .sidebar {
+    contain: layout style;
+}
+
+#sidebar ul li, .sidebar ul li, .sub-menu li {
+    min-height: 44px !important;
+    height: 44px !important;
     box-sizing: border-box;
+    contain: layout;
+}
+
+/* 4. Trava a geometria dos rótulos e ícones para o navegador reservar o espaço exato */
+span.text-menu {
+    display: inline-block !important;
+    line-height: normal !important;
+    white-space: nowrap;
+}
+
+#sidebar img, .sidebar img, .sub-menu img {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    object-fit: contain;
 }
 .titulo_sub-menu{
     display: flex;
@@ -656,7 +721,21 @@ td video {
     display: none!important;
 }
 
+.ol-overlaycontainer-stopevent {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none;
+}
 
+.ol-overlaycontainer-stopevent > div {
+    pointer-events: auto;
+}
+.ol-control {
+    box-sizing: border-box;
+}
 #top-left-container {
     position: absolute;
     left: 0;
@@ -757,6 +836,9 @@ td video {
     margin-top: 8px;
     margin-left: 8px;
 	display: flex;
+    min-height: 26px;
+    min-width: 26px;
+    box-sizing: border-box;
 }
 
 .tooltip {
