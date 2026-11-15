@@ -1039,7 +1039,6 @@
                     liberado = true;
                     clearTimeout(timeoutId);
                     
-                    // Garante um respiro milimétrico para o canvas establicizar o buffer de vídeo na web
                     setTimeout(function() {
                         liberarInterface();
                     }, 300);
