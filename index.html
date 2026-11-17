@@ -185,7 +185,7 @@
                                                             <img src="/Apresentacao/images/Recorte_desenhar.png" alt="Recorte Espacial por Arquivo" loading="lazy" aria-hidden="true">
 
                                                             <p class="title-submenu">Submenu de Dados Externos</p>
-                                                            <span>Permite integrar e visualizar fontes de dados externos e geoserviços no portal: <br> 
+                                                            <span>Permite visualizar fontes de dados externos e geoserviços no portal: <br> 
                                                             Insira o endereço (URL) de serviços compatíveis com padrões WMS para adicionar novas camadas para combiná-las com o acervo da plataforma.</span>
                                                             <span>
                                                                 Exemplo de URL compatível: <br> https://geoservicos.inde.gov.br/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers=BNDES:AP_2014&styles=&bbox=-74,-34,-27,6&width=297&height=245&tiled<br>=true&srs=EPSG:4326&format=image/png&transparent=true
@@ -217,20 +217,20 @@
                     <ul>
                         <li> 
                             <a href="#">
-                                <img src="images/icons8-pesquisar.svg" alt="Pesquisar" width="24" height="24" style="margin-bottom: 4px;" aria-hidden="true" >
+                                <img src="images/icons8-pesquisar.svg" alt="Pesquisar" width="24" height="24" style="margin-bottom: 5%;" aria-hidden="true" >
                                 <span class="text-menu">Pesquisar </span>
                             </a>
                         </li>
                         <li> 
                             <a href="#">
-                                <img src="images/icons8-recortar-100.png" alt="Recorte espacial" width="24" height="24" style="margin-bottom: 4px;" aria-hidden="true">
+                                <img src="images/icons8-recortar-100.png" alt="Recorte espacial" width="24" height="24" style="margin-bottom: 5%;" aria-hidden="true">
                                 <span class="text-menu">Recorte espacial</span>
                             </a>  
                             
                         </li>
                         <li> 
                             <a href="#">
-                                <img src="images/icons8-globo-100.png" alt="Dados externos" width="24" height="24" style="margin-bottom: 4px;" aria-hidden="true">
+                                <img src="images/icons8-globo-100.png" alt="Dados externos" width="24" height="24" style="margin-bottom: 5%;" aria-hidden="true">
                                 <span class="text-menu">Dados externos</span>
                             </a>
                         </li>
@@ -327,30 +327,12 @@
                             <span style="display: flex; flex-shrink: 1;"> Dados externos </span>
                             <button id="btn-fechar-sub-menu-externo" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt="Fechar"></button>
                         </div>
-                        <p class="titulo_item_sub-menu">Buscar camadas <br> </p>
-                            <p> <br> Selecione a instituição </p> 
-                            <select id="select-instituicao" class="campo">
-                                <option value="ANA"> Agência Nacional de Águas e Saneamento Básico (ANA)</option>
-                                <option value="FUNAI">Fundação Nacional dos Povos índigenas (FUNAI) </option>
-                                <option value="IBAMA">Instito Brasileiro do Meio Ambiente e dos Recursos Renováveis (IBAMA) </option>
-                                <option value="IBGE"> Instituto Brasileiro de Geográfia e Estatística (IBGE)</option>
-                            </select>
-                            <button id="btn-externo" class="button_campo"> <i class="fa fa-search" aria-hidden="true"></i>
-                                <span>Pesquisar </span>
-                            </button>
-                        <div id="div-camadas-wms" style="display: none; margin-top: 15px;">
-                            <p>Selecione a camada</p>
-                            <select id="select-camada-wms" class="campo"></select>
-                            <button id="btn-adicionar-camada" class="button_campo" style="margin-top: 8px;">
-                                <span>Adicionar ao Mapa</span>
-                            </button>
-                        </div>
-                        <div class="separador"></div>
                         <p> <br> URL WMS </p> 
                         <input id="input-url-wms" class="campo" placeholder="url wms da camada">
                         <button id="btn-url-wms" class="button_campo" > <i class="fas fa-plus" aria-hidden="true"></i>
                             <span>Adicionar</span>
                         </button>
+                        <span style="margin-top: 10px; justify-content: flex-start;">Exemplo de URL compatível: <br> https://geoservicos.inde.gov.br/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers<br>=BNDES:AP_2014&styles=&bbox=-74,-34,-27,6&width=2<br>97&height=245&tiled=true&srs=EPSG:4326&format=ima<br>ge/png&transparent=true</span>
                 </div>
                 <div id="popup-camada-opcoes" class="popup-camada-opcoes" style="display:none">
                     <div class="popup-camada-opcoes-header">
