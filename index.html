@@ -93,7 +93,7 @@
                         <img src="images/logo.webp" alt="Logo UFPI" class="brasao" width="40" height="40">
                         <img src="images/GeoInova.webp" alt="Logo GeoInova" class="GeoInova" width="50" height="42">
                         <div class="separador-header"></div>
-                        <img src="images/Emblema-AcervoMap-UFPI.webp" alt="Logo SIGWeb" width="40" height="40" fetchpriority="high" >
+                        <img src="images/Emblema-AcervoMap-UFPI.webp" alt="Logo SIGWeb" width="40" height="40" fetchpriority="high" decoding="async" >
                         <div class="titulo">
                             <div style="display: flex;" class="titulo_pag">
                                 <h2> UFPI Acervo</h2>
@@ -1085,6 +1085,66 @@
                     setTimeout(function() {
                         loader.style.display = 'none';
                     }, 500);
+                }
+            }
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Detecta se é um dispositivo móvel (ex: largura menor ou igual a 768px)
+                const isMobile = window.innerWidth <= 768;
+
+                if (isMobile) {
+                    // --- FLUXO PARA CELULAR: Remove o loader imediatamente e carrega direto ---
+                    const loader = document.getElementById('page-loader');
+                    if (loader) {
+                        loader.style.display = 'none';
+                    }
+                    // No celular, as camadas WFS já entram de forma adiada/leve sem prender a tela
+                    carregarCamadasWFSAdiadas();
+                    return; // Sai da função e não executa a lógica de desktop
+                }               
+            });
+
+            // Função unificada que chama as tuas funções originais de WFS
+            function carregarCamadasWFSAdiadas() {
+                if (typeof fetchWFSMunicipioscomaltopotencialenergticosolar_3Data === 'function') {
+                    fetchWFSMunicipioscomaltopotencialenergticosolar_3Data("Municípios - Alto Potencial Energético", function(){});
+                }
+                if (typeof fetchWFSLinhadetransmissoplanejado_11Data === 'function') {
+                    fetchWFSLinhadetransmissoplanejado_11Data("Linha de Transmissão Planejada", function(){});
+                }
+                if (typeof fetchWFSSubestaesExpansoPlanejada_12Data === 'function') {
+                    fetchWFSSubestaesExpansoPlanejada_12Data("Subestações - Expansão Planejada", function(){});
+                }
+                if (typeof fetchWFSSubestaesBaseExistente_13Data === 'function') {
+                    fetchWFSSubestaesBaseExistente_13Data("Subestações - Base Existente", function(){});
+                }
+                if (typeof fetchWFSLinhadetransmissaoexistente_14Data === 'function') {
+                    fetchWFSLinhadetransmissaoexistente_14Data("Linha de Transmissão Existente", function(){});
+                }
+                if (typeof fetchWFSCadastroAmbientalRuralCAR_16Data === 'function') {
+                    fetchWFSCadastroAmbientalRuralCAR_16Data("Cadastro Ambiental Rural (CAR)", function(){});
+                }
+                if (typeof fetchWFSSistemadeGestoFundiriaSIGEF_17Data === 'function') {
+                    fetchWFSSistemadeGestoFundiriaSIGEF_17Data("Sistema de Gestão Fundiária (SIGEF)", function(){});
+                }
+                if (typeof fetchWFSBiomasMAPBIOMAS_18Data === 'function') {
+                    fetchWFSBiomasMAPBIOMAS_18Data("Biomas MapBiomas", function(){});
+                }
+                if (typeof fetchWFSreasdeconservaoICMBio_20Data === 'function') {
+                    fetchWFSreasdeconservaoICMBio_20Data("Áreas de Conservação", function(){});
+                }
+                if (typeof fetchWFSRedeHidrogrficaANA_22Data === 'function') {
+                    fetchWFSRedeHidrogrficaANA_22Data("Rede Hidrográfica ANA", function(){});
+                }
+                if (typeof fetchWFSPiau_27Data === 'function') {
+                    fetchWFSPiau_27Data("Piauí", function(){});
+                }
+                if (typeof fetchWFSMunicpiosPiau_28Data === 'function') {
+                    fetchWFSMunicpiosPiau_28Data("Municípios do Piauí", function(){});
+                }
+                if (typeof fetchWFSBrasil_29Data === 'function') {
+                    fetchWFSBrasil_29Data("Brasil", function(){});
                 }
             }
         </script>
