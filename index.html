@@ -1037,7 +1037,6 @@
         <script src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist/geotiff.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-    // Tempo máximo de segurança caso o GeoServer demore a responder na web
                 const tempoLimiteSeguranca = setTimeout(function() {
                     liberarInterface();
                 }, 6000);
@@ -1072,7 +1071,6 @@
                     }, 300);
                 }
 
-                // O OpenLayers dispara 'rendercomplete' apenas quando a camada e o canvas estão 100% prontos
                 map.once('rendercomplete', function() {
                     finalizarCarga();
                 });
@@ -1105,48 +1103,41 @@
                 }               
             });
 
-            // Função unificada que chama as tuas funções originais de WFS
-            function carregarCamadasWFSAdiadas() {
-                if (typeof fetchWFSMunicipioscomaltopotencialenergticosolar_3Data === 'function') {
-                    fetchWFSMunicipioscomaltopotencialenergticosolar_3Data("Municípios - Alto Potencial Energético", function(){});
-                }
-                if (typeof fetchWFSLinhadetransmissoplanejado_11Data === 'function') {
-                    fetchWFSLinhadetransmissoplanejado_11Data("Linha de Transmissão Planejada", function(){});
-                }
-                if (typeof fetchWFSSubestaesExpansoPlanejada_12Data === 'function') {
-                    fetchWFSSubestaesExpansoPlanejada_12Data("Subestações - Expansão Planejada", function(){});
-                }
-                if (typeof fetchWFSSubestaesBaseExistente_13Data === 'function') {
-                    fetchWFSSubestaesBaseExistente_13Data("Subestações - Base Existente", function(){});
-                }
-                if (typeof fetchWFSLinhadetransmissaoexistente_14Data === 'function') {
-                    fetchWFSLinhadetransmissaoexistente_14Data("Linha de Transmissão Existente", function(){});
-                }
-                if (typeof fetchWFSCadastroAmbientalRuralCAR_16Data === 'function') {
-                    fetchWFSCadastroAmbientalRuralCAR_16Data("Cadastro Ambiental Rural (CAR)", function(){});
-                }
-                if (typeof fetchWFSSistemadeGestoFundiriaSIGEF_17Data === 'function') {
-                    fetchWFSSistemadeGestoFundiriaSIGEF_17Data("Sistema de Gestão Fundiária (SIGEF)", function(){});
-                }
-                if (typeof fetchWFSBiomasMAPBIOMAS_18Data === 'function') {
-                    fetchWFSBiomasMAPBIOMAS_18Data("Biomas MapBiomas", function(){});
-                }
-                if (typeof fetchWFSreasdeconservaoICMBio_20Data === 'function') {
-                    fetchWFSreasdeconservaoICMBio_20Data("Áreas de Conservação", function(){});
-                }
-                if (typeof fetchWFSRedeHidrogrficaANA_22Data === 'function') {
-                    fetchWFSRedeHidrogrficaANA_22Data("Rede Hidrográfica ANA", function(){});
-                }
-                if (typeof fetchWFSPiau_27Data === 'function') {
-                    fetchWFSPiau_27Data("Piauí", function(){});
-                }
-                if (typeof fetchWFSMunicpiosPiau_28Data === 'function') {
-                    fetchWFSMunicpiosPiau_28Data("Municípios do Piauí", function(){});
-                }
-                if (typeof fetchWFSBrasil_29Data === 'function') {
-                    fetchWFSBrasil_29Data("Brasil", function(){});
+         function carregarCamadasWFSAdiadas() {
+        // Usa requestIdleCallback se disponível, garantindo que o telemóvel 
+        // só processa as camadas quando a thread principal estiver ociosa e livre de toques.
+        const executarQuandoOcioso = window.requestIdleCallback || function(cb) { setTimeout(cb, 500); };
+
+        executarQuandoOcioso(function() {
+            // Dispara as camadas de forma intercalada e leve
+            const funcoesWFS = [
+                function() { if(typeof fetchWFSMunicipioscomaltopotencialenergticosolar_3Data === 'function') fetchWFSMunicipioscomaltopotencialenergticosolar_3Data("Municípios - Alto Potencial Energético", function(){}); },
+                function() { if(typeof fetchWFSLinhadetransmissoplanejado_11Data === 'function') fetchWFSLinhadetransmissoplanejado_11Data("Linha de Transmissão Planejada", function(){}); },
+                function() { if(typeof fetchWFSSubestaesExpansoPlanejada_12Data === 'function') fetchWFSSubestaesExpansoPlanejada_12Data("Subestações - Expansão Planejada", function(){}); },
+                function() { if(typeof fetchWFSSubestaesBaseExistente_13Data === 'function') fetchWFSSubestaesBaseExistente_13Data("Subestações - Base Existente", function(){}); },
+                function() { if(typeof fetchWFSLinhadetransmissaoexistente_14Data === 'function') fetchWFSLinhadetransmissaoexistente_14Data("Linha de Transmissão Existente", function(){}); },
+                function() { if(typeof fetchWFSCadastroAmbientalRuralCAR_16Data === 'function') fetchWFSCadastroAmbientalRuralCAR_16Data("Cadastro Ambiental Rural (CAR)", function(){}); },
+                function() { if(typeof fetchWFSSistemadeGestoFundiriaSIGEF_17Data === 'function') fetchWFSSistemadeGestoFundiriaSIGEF_17Data("Sistema de Gestão Fundiária (SIGEF)", function(){}); },
+                function() { if(typeof fetchWFSBiomasMAPBIOMAS_18Data === 'function') fetchWFSBiomasMAPBIOMAS_18Data("Biomas MapBiomas", function(){}); },
+                function() { if(typeof fetchWFSreasdeconservaoICMBio_20Data === 'function') fetchWFSreasdeconservaoICMBio_20Data("Áreas de Conservação", function(){}); },
+                function() { if(typeof fetchWFSRedeHidrogrficaANA_22Data === 'function') fetchWFSRedeHidrogrficaANA_22Data("Rede Hidrográfica ANA", function(){}); },
+                function() { if(typeof fetchWFSPiau_27Data === 'function') fetchWFSPiau_27Data("Piauí", function(){}); },
+                function() { if(typeof fetchWFSMunicpiosPiau_28Data === 'function') fetchWFSMunicpiosPiau_28Data("Municípios do Piauí", function(){}); },
+                function() { if(typeof fetchWFSBrasil_29Data === 'function') fetchWFSBrasil_29Data("Brasil", function(){}); }
+            ];
+
+            // Executa uma camada por ciclo de ociosidade para nunca travar o toque do utilizador
+            let i = 0;
+            function proximaCamada() {
+                if (i < funcoesWFS.length) {
+                    funcoesWFS[i]();
+                    i++;
+                    setTimeout(proximaCamada, 50); // Espaço de 300ms entre cada pedido WFS
                 }
             }
+            proximaCamada();
+        }, { timeout: 3000 });
+    }
         </script>
     </body>
 </html>
