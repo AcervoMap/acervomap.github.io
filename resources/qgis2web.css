@@ -18,6 +18,7 @@ main{
     width: 100% !important;
     height: 100%;
     display: flex;
+    position: relative;
     box-sizing: border-box !important;
     
 }
@@ -59,13 +60,16 @@ main{
 .north-icon { 
     position: absolute;
     bottom: 8%;       
-    left: 6.2%;         
+    left: 2.2%;         
     width: 2.5%;        
     height: auto;
     z-index: 1000;      
     pointer-events: none; 
     background: transparent;
     margin: 0;
+}
+.north-icon.submenu-aberto {
+    left: 25.5%;
 }
 header {
     width: 100%;
@@ -221,11 +225,15 @@ header {
     width:4%;
     height: auto;
     background: #1f424a;
+    
 }
 #sidebar ul {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     padding: 0;
     margin: 0;
+    gap: 15%;
     list-style: none;
     box-sizing: border-box;
 }
@@ -233,6 +241,7 @@ header {
 #sidebar ul li {
     list-style: none;
     align-items: center;
+    
 }
 
 #sidebar ul li, nav#sidebar li {
@@ -245,7 +254,6 @@ header {
     flex-direction: column;
     align-items: center;
     margin: 10%;
-    margin-bottom: 25%;
     box-sizing: border-box;
     padding: 10% 0% 0% 2%;
     color: #fff;
@@ -1716,4 +1724,32 @@ td video {
         padding: 12px !important;
         font-size: 10px !important;
     }
+}
+
+.btn-remover-marcador {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    background-color: #c0392b;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    pointer-events: auto;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-remover-marcador:hover {
+    background-color: #e74c3c;
+    transform: scale(1.08);
+}
+
+.btn-remover-marcador.visivel {
+    display: flex;
 }
