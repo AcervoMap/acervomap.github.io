@@ -60,7 +60,6 @@ var wms_layers = [];
 
         var lyr_ESRITopo_2 = new ol.layer.Tile({
             'title': 'ESRI Topo',
-            'type':'base',
             'opacity': 1.000000,
             
             
@@ -1031,7 +1030,7 @@ function garantirCarregamentoWFS(layer, source, fetchFunction, formatador) {
                 console.error("Erro ao carregar:", error);
                 return;
             }
-            try {
+            try {   
                 var features = formatador.readFeatures(response, {
                     dataProjection: 'EPSG:3857',
                     featureProjection: map.getView().getProjection()
