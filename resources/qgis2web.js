@@ -105,7 +105,7 @@ closer.onclick = function() {
 };
 var overlayPopup = new ol.Overlay({
     element: container,
-	autoPan: true
+	autoPan: false
 });
 map.addOverlay(overlayPopup)
     
@@ -235,13 +235,31 @@ function onPointerMove(evt) {
     var clusteredFeatures;
     var clusterLength;
     var popupText = '<ul>';
+    var sobreDesenhoRecorte = false;
 
     var featuresAndLayers = [];
-    map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+   map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+        if (
+            layer === drawLayer ||
+            (feature instanceof ol.Feature && typeof drawSource !== 'undefined' && drawSource.hasFeature(feature))
+        ) {
+            sobreDesenhoRecorte = true;
+            return;
+        }
+
         if (layer && feature instanceof ol.Feature && (layer.get("interactive") || layer.get("interactive") === undefined)) {
             featuresAndLayers.push({ feature, layer });
         }
     });
+
+    if (sobreDesenhoRecorte && featuresAndLayers.length === 0) {
+        clearTimeout(wmsHoverTimeout);
+        if (highlight) {
+            featureOverlay.getSource().removeFeature(highlight);
+            highlight = null;
+        }
+        return;
+    }
 
     if (featuresAndLayers.length > 0) {
         clearTimeout(wmsHoverTimeout); // Cancela o WMS se estiver sobre vetor
@@ -1113,6 +1131,8 @@ function onSelected(feature) {
     }));
     
     vectorSource.addFeature(marker);
+    coordMarcadorGeocoder = coordinates;
+    overlayApagarMarcador.setPosition(coordinates);
     map.getView().setCenter(coordinates);
     map.getView().setZoom(13); // Zoom ideal para enquadrar o município
 }
@@ -1184,6 +1204,74 @@ if (btnMunicipio && inputMunicipio) {
             });
     });
 }
+
+// Botão flutuante para apagar o marcador ao passar o mouse
+var btnApagarMarcador = document.createElement('button');
+btnApagarMarcador.type = 'button';
+btnApagarMarcador.className = 'btn-remover-marcador';
+btnApagarMarcador.title = 'Apagar marcador';
+btnApagarMarcador.setAttribute('aria-label', 'Apagar marcador');
+btnApagarMarcador.innerHTML = '&times;';
+
+var overlayApagarMarcador = new ol.Overlay({
+    element: btnApagarMarcador,
+    positioning: 'bottom-center',
+    offset: [0, -34],
+    stopEvent: true
+});
+map.addOverlay(overlayApagarMarcador);
+
+var coordMarcadorGeocoder = null;
+var timerEsconderMarcador = null;
+
+function apagarMarcadorGeocoder() {
+    vectorSource.clear(true);
+    coordMarcadorGeocoder = null;
+    btnApagarMarcador.classList.remove('visivel');
+    overlayApagarMarcador.setPosition(undefined);
+}
+
+btnApagarMarcador.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    apagarMarcadorGeocoder();
+});
+
+btnApagarMarcador.addEventListener('mouseenter', function () {
+    clearTimeout(timerEsconderMarcador);
+    if (coordMarcadorGeocoder) {
+        btnApagarMarcador.classList.add('visivel');
+    }
+});
+
+btnApagarMarcador.addEventListener('mouseleave', function () {
+    timerEsconderMarcador = setTimeout(function () {
+        btnApagarMarcador.classList.remove('visivel');
+    }, 150);
+});
+
+map.on('pointermove', function (evt) {
+    if (evt.dragging || !coordMarcadorGeocoder) return;
+
+    var sobreIcone = map.hasFeatureAtPixel(evt.pixel, {
+        layerFilter: function (layer) {
+            return layer === geocoderLayer;
+        }
+    });
+
+    if (sobreIcone) {
+        clearTimeout(timerEsconderMarcador);
+        overlayApagarMarcador.setPosition(coordMarcadorGeocoder);
+        btnApagarMarcador.classList.add('visivel');
+    } else {
+        timerEsconderMarcador = setTimeout(function () {
+            if (!btnApagarMarcador.matches(':hover')) {
+                btnApagarMarcador.classList.remove('visivel');
+            }
+        }, 150);
+    }
+});
+
 
 //layerswitcher
 
@@ -1609,6 +1697,83 @@ function popularSelectCamadas() {
 
 popularSelectCamadas();
 
+let camadaRecorteAnterior = null;
+const camadasGerenciadasPorRecorte = new Set();
+
+function obterCamadaPorSelect(selectEl) {
+    if (!selectEl) return null;
+    const opt = selectEl.options[selectEl.selectedIndex];
+    if (!opt) return null;
+
+    if (opt.layerObject && typeof opt.layerObject.setVisible === 'function') {
+        return opt.layerObject;
+    }
+
+    const nomeAlvo = (opt.textContent || opt.value || '').trim().toLowerCase();
+    if (!nomeAlvo || typeof map === 'undefined' || !map.getLayers) return null;
+
+    let encontrada = null;
+    function buscar(colecao) {
+        colecao.forEach(function (item) {
+            if (encontrada || !item) return;
+            if (typeof item.getLayers === 'function') {
+                buscar(item.getLayers());
+            } else if (typeof item.get === 'function') {
+                const titulo = (item.get('title') || '').trim().toLowerCase();
+                if (titulo === nomeAlvo) {
+                    encontrada = item;
+                }
+            }
+        });
+    }
+    buscar(map.getLayers());
+    return encontrada;
+}
+
+function esconderCamadasAnteriores(camadaAtual) {
+    // 1. Desliga a última camada escolhida no recorte se for diferente da atual
+    if (
+        camadaRecorteAnterior &&
+        camadaRecorteAnterior !== camadaAtual &&
+        typeof camadaRecorteAnterior.setVisible === 'function'
+    ) {
+        camadaRecorteAnterior.setVisible(false);
+    }
+
+    // 2. Garante que qualquer outra camada já ativada pelo recorte seja desligada
+    camadasGerenciadasPorRecorte.forEach(function (cam) {
+        if (cam && cam !== camadaAtual && typeof cam.setVisible === 'function') {
+            cam.setVisible(false);
+        }
+    });
+}
+
+function vincularTrocaLimpa(selectId) {
+    const selectEl = document.getElementById(selectId);
+    if (!selectEl) return;
+
+    selectEl.addEventListener('change', function () {
+        const novaCamada = obterCamadaPorSelect(this);
+
+        esconderCamadasAnteriores(novaCamada);
+
+        if (novaCamada && typeof novaCamada.setVisible === 'function') {
+            novaCamada.setVisible(true);
+            camadasGerenciadasPorRecorte.add(novaCamada);
+            camadaRecorteAnterior = novaCamada;
+        } else {
+            camadaRecorteAnterior = null;
+        }
+
+        if (typeof layerSwitcher !== 'undefined' && typeof layerSwitcher.renderPanel === 'function') {
+            layerSwitcher.renderPanel();
+        }
+    });
+}
+
+vincularTrocaLimpa('select-recorte');
+vincularTrocaLimpa('select-recorte-arquivo');
+
 //Button aplicar Recorte em uma Camada
 // Configuração do botão "Recortar" utilizando o ID específico
 const btnRecortar = document.getElementById('btn-executar-recorte');
@@ -1682,7 +1847,7 @@ if (btnRecortar) {
         }
 
         // Mensagem inicial de processamento
-        containerResultado.innerHTML = `<p style="font-size: 13px; color: #333; margin: 0;"><i class="fa-solid fa-spinner fa-spin"></i> Processando recorte espacial de <strong>${nomeCamada}</strong>...</p>`;
+        containerResultado.innerHTML = `<p style="font-size: 13px; color: #333; margin: 0;"><i class="fa fa-spinner fa-spin"></i> Processando recorte de <strong>${nomeCamada}</strong>...</p>`;
 
         // --- 2A. PROCESSAMENTO DE CAMADA VETORIAL (Nativa ou WFS Sob Demanda) ---
         
@@ -1696,7 +1861,7 @@ if (btnRecortar) {
         if (mapWfsNames[idSelecionado]) {
             var typeNameGeoServer = mapWfsNames[idSelecionado];
             
-            containerResultado.innerHTML = `<p style="font-size: 13px; color: #333; margin: 0;"><i class="fa-solid fa-spinner fa-spin"></i> A processar feições para <strong>${nomeCamada}</strong>...</p>`;
+            containerResultado.innerHTML = `<p style="font-size: 13px; color: #333; margin: 0;"><i class="fa fa-spinner fa-spin"></i> A processar feições para <strong>${nomeCamada}</strong>...</p>`;
 
             // URL WFS simplificada utilizando a versão 1.0.0 sem restrições complexas de parâmetros
             var wfsUrl = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?" +
@@ -1774,9 +1939,9 @@ if (btnRecortar) {
 
                     containerResultado.innerHTML = `
                         <div style="font-size: 13px; color: #2c3e50;">
-                            <p style="margin: 0 0 8px 0;">Recorte WFS concluído com sucesso! <strong>${featuresAptas.length}</strong> feições extraídas.</p>
+                            <p style="margin: 0 0 8px 0;">Recorte concluído! </p>
                             <a href="${urlDownload}" download="${nomeArquivo}" style="display: inline-block; padding: 7px 14px; background-color: #0072ff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 12px;">
-                                <i class="fa-solid fa-download"></i> Baixar GeoPackage (.gpkg)
+                                <i class="fa fa-download"></i> Baixar GeoPackage (.gpkg)
                             </a>
                         </div>
                     `;
@@ -1836,29 +2001,61 @@ if (btnRecortar) {
                     </div>`;
                 return;
             }
+        featuresAptas.forEach(function(f) {
+                        highlightSource.addFeature(f.clone());
+                    });
 
-            featuresAptas.forEach(function(f) {
-                highlightSource.addFeature(f.clone());
-            });
+                    var writer = new ol.format.GeoJSON();
+                    var geojsonObj = writer.writeFeaturesObject(featuresAptas, {
+                        featureProjection: map.getView().getProjection(),
+                        dataProjection: 'EPSG:4326'
+                    });
 
-            var writer = new ol.format.GeoJSON();
-            var geojsonStr = writer.writeFeatures(featuresAptas, {
-                featureProjection: map.getView().getProjection(),
-                dataProjection: 'EPSG:4326'
-            });
+                    // Remove propriedades aninhadas ou objetos que podem dar erro no DBF
+                    geojsonObj.features.forEach(function(feat) {
+                        var props = feat.properties || {};
+                        var limpas = {};
+                        Object.keys(props).forEach(function(chave) {
+                            var val = props[chave];
+                            if (val !== null && typeof val !== 'object') {
+                                // DBF limita nomes de campos a 10 caracteres
+                                limpas[chave.substring(0, 10)] = val;
+                            }
+                        });
+                        feat.properties = limpas;
+                    });
 
-            var blob = new Blob([geojsonStr], { type: 'application/json' });
-            var urlDownload = URL.createObjectURL(blob);
-            var nomeArquivo = nomeCamada.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_recorte.geojson';
+                    var nomeBase = nomeCamada.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_recorte';
 
-            containerResultado.innerHTML = `
-                <div style="font-size: 13px; color: #2c3e50;">
-                    <p style="margin: 0 0 8px 0;">Recorte concluído! <strong>${featuresAptas.length}</strong> feição(ões) selecionada(s) e destacadas em azul.</p>
-                    <a href="${urlDownload}" download="${nomeArquivo}" style="display: inline-block; padding: 7px 14px; background-color: #0072ff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 12px;">
-                        <i class="fa-solid fa-download"></i> Baixar Atributos (.geojson)
-                    </a>
-                </div>
-            `;
+                    if (typeof shpwrite !== 'undefined' && typeof shpwrite.zip === 'function') {
+                        shpwrite.zip(geojsonObj, {
+                            folder: nomeBase,
+                            types: {
+                                point: nomeBase + '_pontos',
+                                polygon: nomeBase + '_poligonos',
+                                line: nomeBase + '_linhas'
+                            }
+                        }).then(function(content) {
+                            var blob = (content instanceof Blob)
+                                ? content
+                                : new Blob([content], { type: 'application/zip' });
+                            var urlDownload = URL.createObjectURL(blob);
+
+                            containerResultado.innerHTML = `
+                                <div style="font-size: 13px; color: #2c3e50;">
+                                    <p style="margin: 0 0 8px 0;">Recorte concluído!</p>
+                                    <a href="${urlDownload}" download="${nomeBase}.zip" style="display: inline-block; padding: 7px 14px; background-color: #0072ff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 12px;">
+                                        <i class="fa fa-download"></i> Baixar Shapefile (.zip)
+                                    </a>
+                                </div>
+                            `;
+                        }).catch(function(err) {
+                            console.error("Erro ao gerar Shapefile:", err);
+                            containerResultado.innerHTML = `<div style="color: #c0392b; font-size: 13px;"><p style="margin: 0;">Erro ao gerar o Shapefile.</p></div>`;
+                        });
+                    } else {
+                        containerResultado.innerHTML = `<div style="color: #c0392b; font-size: 13px;"><p style="margin: 0;">Biblioteca shp-write não carregada na página.</p></div>`;
+                    }
 
         } else {
             // --- 2B. PROCESSAMENTO ASSÍNCRONO DE CAMADA RASTER / WMS (Ex: MapBiomas, Declividade, etc) ---
@@ -1904,9 +2101,9 @@ if (btnRecortar) {
 
                     containerResultado.innerHTML = `
                         <div style="font-size: 13px; color: #2c3e50;">
-                            <p style="margin: 0 0 8px 0;">Recorte Raster concluído para <strong>${nomeCamada}</strong>!</p>
+                            <p style="margin: 0 0 8px 0;">Recorte concluído para <strong>${nomeCamada}</strong>!</p>
                             <a href="${blobUrl}" download="${nomeArquivoRaster}" style="display: inline-block; padding: 7px 14px; background-color: #27ae60; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 12px;">
-                                <i class="fa-solid fa-file-arrow-down"></i> Baixar GeoTIFF (.tif)
+                                <i class="fa fa-file-arrow-down"></i> Baixar GeoTIFF (.tif)
                             </a>
                         </div>
                     `;
@@ -2085,7 +2282,7 @@ if (btnRecortarArquivo) {
             document.querySelector('.content-3 .recorte_camada').appendChild(containerResultado);
         }
 
-        containerResultado.innerHTML = `<p style="font-size: 13px; color: #333; margin: 0;"><i class="fa-solid fa-spinner fa-spin"></i> Processando recorte para <strong>${nomeCamada}</strong>...</p>`;
+        containerResultado.innerHTML = `<p style="font-size: 13px; color: #333; margin: 0;"><i class="fa fa-spinner fa-spin"></i> Processando recorte para <strong>${nomeCamada}</strong>...</p>`;
 
         // --- VERIFICAÇÃO DE CAMADAS ESPECIAIS (CAR, SIGEF, Municípios) ---
         var wfsUrlEspecifica = null;
@@ -2230,9 +2427,9 @@ if (btnRecortarArquivo) {
 
             containerResultado.innerHTML = `
                 <div style="font-size: 13px; color: #2c3e50;">
-                    <p style="margin: 0 0 8px 0;">Recorte concluído! <strong>${featuresAptas.length}</strong> feição(ões) dentro do limite selecionadas e destacadas.</p>
+                    <p style="margin: 0 0 8px 0;">Recorte concluído!</p>
                     <a href="${urlDownload}" download="${nomeArquivo}" style="display: inline-block; padding: 7px 14px; background-color: #0072ff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 12px;">
-                        <i class="fa-solid fa-download"></i> Baixar GeoPackage (.gpkg)
+                        <i class="fa fa-download"></i> Baixar GeoPackage (.gpkg)
                     </a>
                 </div>
             `;
@@ -2287,7 +2484,7 @@ if (btnRecortarArquivo) {
             var params = source.getParams ? source.getParams() : {};
             var layerName = params.LAYERS || params.layers || "sigweb:mapa_potencial_cog";
 
-            containerResultado.innerHTML = `<p style="font-size: 13px; color: #333; margin: 0;"><i class="fa-solid fa-spinner fa-spin"></i> Processando GeoTIFF para <strong>${nomeCamada}</strong>...</p>`;
+            containerResultado.innerHTML = `<p style="font-size: 13px; color: #333; margin: 0;"><i class="fa fa-spinner fa-spin"></i> Processando recorte para <strong>${nomeCamada}</strong>...</p>`;
 
             // SIMPLIFICAÇÃO RADICAL: Reduz drasticamente os vértices para a URL nunca estourar o limite de tamanho
             var geomSimplificada = geometriaArquivoImportado.clone();
@@ -2323,7 +2520,7 @@ if (btnRecortarArquivo) {
                         <div style="font-size: 13px; color: #2c3e50;">
                             <p style="margin: 0 0 8px 0;">GeoTIFF (.tif) gerado com sucesso para <strong>${nomeCamada}</strong>!</p>
                             <a href="${blobUrl}" download="${nomeArquivoRaster}" style="display: inline-block; padding: 7px 14px; background-color: #27ae60; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 12px;">
-                                <i class="fa-solid fa-file-arrow-down"></i> Baixar GeoTIFF (.tif)
+                                <i class="fa fa-file-arrow-down"></i> Baixar GeoTIFF (.tif)
                             </a>
                         </div>
                     `;
@@ -2345,7 +2542,7 @@ if (btnRecortarArquivo) {
                         <div style="font-size: 13px; color: #2c3e50;">
                             <p style="margin: 0 0 8px 0;">GeoTIFF (.tif) pronto para <strong>${nomeCamada}</strong>:</p>
                             <a href="#" id="download-link-temp" download="${nomeArquivoRaster}" style="display: inline-block; padding: 7px 14px; background-color: #27ae60; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 12px;">
-                                <i class="fa-solid fa-file-arrow-down"></i> Baixar GeoTIFF (.tif)
+                                <i class="fa fa-file-arrow-down"></i> Baixar GeoTIFF (.tif)
                             </a>
                         </div>
                     `;
@@ -2751,7 +2948,7 @@ if (btnTabelaAtributos) {
             var atributosContainer = document.getElementById('atributos-container');
             if (atributosContainer) atributosContainer.style.display = 'flex';
             var tbody = document.querySelector('#atributos-dados tbody');
-            if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;"><i class="fa-solid fa-spinner fa-spin"></i> A carregar atributos do GeoServer...</td></tr>`;
+            if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i> A carregar atributos do GeoServer...</td></tr>`;
 
             fetch(wfsUrlEspecifica)
                 .then(function(response) {
@@ -3146,5 +3343,3 @@ map.addControl(coordenadasMouse);
 document.getElementById('btn-home').addEventListener('click', function() {
     window.location.href = 'LandingPage.html';
 });
-
-
