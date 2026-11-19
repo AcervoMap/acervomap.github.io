@@ -439,19 +439,21 @@
             };
         </script>       
         <script src="styles/Municipioscomaltopotencialenergticosolar_3_style.js" defer></script><script src="styles/Linhadetransmissoplanejado_11_style.js" defer></script><script src="styles/SubestaesExpansoPlanejada_12_style.js" defer></script><script src="styles/SubestaesBaseExistente_13_style.js" defer></script><script src="styles/Linhadetransmissaoexistente_14_style.js" defer></script><script src="styles/usinas_foto_editado_15_style.js" defer></script><script src="styles/CadastroAmbientalRuralCAR_16_style.js" defer></script><script src="styles/SistemadeGestoFundiriaSIGEF_17_style.js" defer></script><script src="styles/BiomasMAPBIOMAS_18_style.js" defer></script><script src="styles/reasdeconservaoICMBio_20_style.js" defer></script><script src="styles/RedeHidrogrficaANA_22_style.js" defer></script><script src="styles/Piau_27_style.js" defer></script><script src="styles/MunicpiosPiau_28_style.js" defer></script><script src="styles/Brasil_29_style.js" defer></script>
-        <script type="module" src="resources/control.MiniMap.js"></script>
         <script>
+            // Declara a função responsável por solicitar os dados vetoriais ao GeoServer.
             function fetchWFSMunicipioscomaltopotencialenergticosolar_3Data(title, callback) {
+                //Define o endereço do serviço WFS e os parâmetros da operação GetFeature,
                 var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Municipios_alto_potencial_energético_solar&SRSNAME=EPSG:3857";
 
                 function fetchWithFallback(u) {
+                    //Executa a requisição HTTP diretamente ao GeoServer.
                     return fetch(u)
                         .then(function (r) {
                             if (!r.ok) throw new Error("Bad response");
                             return r.text();
                         })
                         .catch(function () {
-                            // Fallback AllOrigins
+                            //Utiliza o serviço AllOrigins como intermediário para tentar acessar os dados caso a requisição direta não funcione.
                             return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
                                 .then(function (r) {
                                     if (!r.ok) throw new Error("Proxy failed");
@@ -459,8 +461,6 @@
                                 });
                         });
                 }
-
-                // Imposta un'icona di caricamento durante il fetch
                 lyr_Municipioscomaltopotencialenergticosolar_3.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
                 fetchWithFallback(url)
                     .then(function (response) {
@@ -1031,9 +1031,11 @@
         <script src="./layers/layers.js" type="text/javascript" defer></script> 
         <script src="./resources/Autolinker.min.js" defer></script>
         <script src="./resources/qgis2web.js" defer></script> 
+        <script src="resources/control.MiniMap.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/geotiff@2/dist/geotiff.bundle.js"></script>
         <script src="https://unpkg.com/shpjs@latest/dist/shp.js" defer></script>
+        <script src="https://unpkg.com/@mapbox/shp-write@latest/shpwrite.js" defer></script>
         <script src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist/geotiff.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
