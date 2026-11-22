@@ -358,12 +358,14 @@
                             <span style="display: flex; flex-shrink: 1;"> Dados externos </span>
                             <button id="btn-fechar-sub-menu-externo" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt="Fechar"></button>
                         </div>
-                        <p> <br> URL WMS </p> 
-                        <input id="input-url-wms" class="campo" placeholder="url wms da camada">
-                        <button id="btn-url-wms" class="button_campo" > <i class="fas fa-plus" aria-hidden="true"></i>
-                            <span>Adicionar</span>
-                        </button>
-                        <span style="margin-top: 10px; justify-content: flex-start;">Exemplo de URL compatível: <br> https://geoservicos.inde.gov.br/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers<br>=BNDES:AP_2014&styles=&bbox=-74,-34,-27,6&width=2<br>97&height=245&tiled=true&srs=EPSG:4326&format=ima<br>ge/png&transparent=true</span>
+                            <p> <br> URL WMS </p> 
+                            <div class="url">
+                                <input id="input-url-wms" class="campo" placeholder="url wms da camada">
+                                <button id="btn-url-wms" class="button_campo" > <i class="fas fa-plus" aria-hidden="true"></i>
+                                    <span>Adicionar</span>
+                                </button>
+                                <p>Exemplo compatível: <br> https://geoservicos.ibge.gov.br/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers=CCAR:BCIM_Unidade_Protecao_Integral_A&styles=&bbox=-73.999,-33.605,-32.349,5.278&width=263&height=245&tiled=true&srs=EPSG:4326&format=image/png&transparent=true</span>
+                            </div>
                 </div>
                 <div id="popup-camada-opcoes" class="popup-camada-opcoes" style="display:none">
                     <div class="popup-camada-opcoes-header">
