@@ -447,7 +447,6 @@ span.text-menu {
 }
 
 #Adicionar_por_coordenadas:checked ~ nav label .Desenhar_no_mapa,
-#Adicionar_por_coordenadas:checked ~ nav label .Adicionar_por_coordenadas,
 #Adicionar_por_coordenadas:checked ~ nav label .Importar_arquivo {
     color: #28304b;
 }
@@ -468,9 +467,6 @@ input[type="radio"] {
     z-index: 1;
 }
 
-#Adicionar_por_coordenadas:checked ~ nav .slider {
-    left: 50%;
-}
 
 #Importar_arquivo:checked ~ nav .slider {
     left: 50%;
@@ -497,10 +493,6 @@ section .content{
 
 #Desenhar_no_mapa:checked ~ section .content-1{
     display: block;
-}
-
-#Adicionar_por_coordenadas:checked ~ section .content-2{
-    display: block; 
 }
 
 #Importar_arquivo:checked ~ section .content-3{
@@ -548,6 +540,26 @@ section .content{
     gap: 12px;
     padding: 10px;
     height: 50%;
+}
+
+
+.url{
+    display: flex;
+    flex-direction: column;
+    gap: 8%;
+}
+
+.url input{
+    width: 95%;
+}
+
+.url p{
+    margin-top: 5%;
+    line-height: 1.7;
+    text-align: justify;
+    width: 95%;
+    overflow-wrap: break-word;
+    word-break: break-all;
 }
 
 .ol-control {

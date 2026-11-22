@@ -2558,141 +2558,107 @@ if (btnRecortarArquivo) {
         };
     }
 };
+//Menu externo
+document.addEventListener("DOMContentLoaded", function () {
+    const btnUrlWms = document.getElementById("btn-url-wms");
+    if (!btnUrlWms) return;
 
+    // Pega o input dentro do mesmo container/submenu do botão (ou o primeiro input da área de dados externos)
+    const containerExterno =
+        btnUrlWms.closest("#sub-menu-externo, .sub-menu, form, div") || document;
+    const inputUrlWms =
+        containerExterno.querySelector('input[type="url"], input[type="text"], input') ||
+        document.getElementById("input-url-wms");
 
-//Conexão com dados externos
-const btnExterno = document.getElementById('btn-externo');
-const selectInstituicao = document.getElementById('select-instituicao');
-const divCamadasWms = document.getElementById('div-camadas-wms');
-const selectCamadaWms = document.getElementById('select-camada-wms');
-const btnAdicionarCamada = document.getElementById('btn-adicionar-camada');
-
-// URLs WMS oficiais
-const urlsWMS = {
-    "ANA": "https://geoserver.ana.gov.br/geoserver/wms",
-    "FUNAI": "https://geoserver.funai.gov.br/geoserver/wms",
-    "IBAMA": "https://siscom.ibama.gov.br/geoserver/wms",
-    "IBGE": "https://geoservicos.ibge.gov.br/geoserver/wms"
-};
-
-// Listas de camadas garantidas por instituição (evita falhas de CORS no navegador)
-const catalogoCamadas = {
-    "ANA": [
-        { name: "massa_dagua", title: "Massas d'Água" },
-        { name: "rios_principais", title: "Rios Principais" },
-        { name: "bacias_hidrograficas", title: "Bacias Hidrográficas" }
-    ],
-    "FUNAI": [
-        { name: "terras_indigenas", title: "Terras Indígenas Homologadas" },
-        { name: "terras_indigenas_regularizadas", title: "Terras Indígenas Regularizadas" }
-    ],
-    "IBAMA": [
-        { name: "embargos_ambientais", title: "Áreas Embargadas" },
-        { name: "unidades_conservacao", title: "Unidades de Conservação Federais" }
-    ],
-    "IBGE": [
-        { name: "rede_viaria", title: "Rede Viária do Brasil" },
-        { name: "limites_municipais", title: "Limites Municipais" },
-        { name: "biomas_brasileiros", title: "Biomas do Brasil" },
-        { name: "estados", title: "Unidades da Federação (Estados)" }
-    ]
-};
-
-let urlWmsAtual = "";
-let nomeInstituicaoAtual = "";
-
-// 1. Ao clicar em "Pesquisar" na instituição
-if (btnExterno && selectInstituicao) {
-    btnExterno.onclick = async function () {
-        const sigla = selectInstituicao.value;
-        nomeInstituicaoAtual = selectInstituicao.options[selectInstituicao.selectedIndex].text;
-        urlWmsAtual = urlsWMS[sigla];
-
-        if (!urlWmsAtual) {
-            alert("URL WMS não configurada para esta instituição.");
-            return;
+    function extrairDadosWms(urlBruta) {
+        const valor = (urlBruta || "").trim();
+        if (!valor) {
+            return { erro: "Por favor, insira uma URL WMS." };
         }
 
-        // Limpa e prepara o select de camadas
-        selectCamadaWms.innerHTML = "";
-        let listaCamadas = catalogoCamadas[sigla] || [];
-
+        let urlObj;
         try {
-            // Tenta buscar dinamicamente do servidor via GetCapabilities
-            const capUrl = `${urlWmsAtual.split('?')[0]}?service=WMS&version=1.3.0&request=GetCapabilities`;
-            const response = await fetch(capUrl);
-            
-            if (response.ok) {
-                const text = await response.text();
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(text, "text/xml");
-                const layerElements = xmlDoc.getElementsByTagName("Layer");
-                
-                let camadasRemotas = [];
-                for (let i = 0; i < layerElements.length; i++) {
-                    const nameTag = layerElements[i].getElementsByTagName("Name")[0];
-                    const titleTag = layerElements[i].getElementsByTagName("Title")[0];
-                    if (nameTag && titleTag) {
-                        camadasRemotas.push({
-                            name: nameTag.textContent.trim(),
-                            title: titleTag.textContent.trim()
-                        });
-                    }
-                }
-                if (camadasRemotas.length > 0) {
-                    listaCamadas = camadasRemotas;
-                }
-            }
+            urlObj = new URL(valor);
         } catch (e) {
-            console.warn("CORS bloqueou GetCapabilities remoto, a utilizar catálogo seguro pré-configurado.");
+            return { erro: "URL inválida. Verifique o endereço digitado." };
         }
 
-        // Preenche o menu suspenso de camadas com as opções encontradas
-        listaCamadas.forEach(camada => {
-            const opt = document.createElement('option');
-            opt.value = camada.name;
-            opt.textContent = camada.title;
-            selectCamadaWms.appendChild(opt);
-        });
+        const params = urlObj.searchParams;
+        const camada = decodeURIComponent(
+            params.get("layers") || params.get("LAYERS") || ""
+        ).trim();
 
-        // Mostra o menu suspenso de seleção de camadas
-        divCamadasWms.style.display = "block";
-        alert(`Catálogo de ${sigla} carregado! Selecione a camada desejada abaixo.`);
-    };
-}
+        const urlBase = `${urlObj.origin}${urlObj.pathname}`;
+        const versao = params.get("version") || params.get("VERSION") || "1.1.0";
+        const estilos = params.get("styles") || params.get("STYLES") || "";
 
-// 2. Ao clicar em "Adicionar ao Mapa" a camada escolhida no menu suspenso
-if (btnAdicionarCamada) {
-    btnAdicionarCamada.onclick = function () {
-        const camadaNome = selectCamadaWms.value;
-        const camadaTitulo = selectCamadaWms.options[selectCamadaWms.selectedIndex]?.text || camadaNome;
+        return {
+            urlBase,
+            camada,
+            versao,
+            estilos
+        };
+    }
 
-        if (!camadaNome) {
-            alert("Selecione uma camada válida na lista.");
+    btnUrlWms.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        if (!inputUrlWms) {
+            alert("Campo de entrada da URL WMS não encontrado.");
             return;
         }
 
-        // Cria a camada WMS no OpenLayers
-        const novaCamadaWMS = new ol.layer.Tile({
+        const dados = extrairDadosWms(inputUrlWms.value);
+
+        if (dados.erro) {
+            alert(dados.erro);
+            return;
+        }
+
+        if (!dados.camada) {
+            alert(
+                "Não foi encontrado o parâmetro 'layers' na URL. Ex.: ...&layers=BNDES:AP_2014&..."
+            );
+            return;
+        }
+
+        const camadaWms = new ol.layer.Tile({
+            title: `INDE - ${dados.camada}`,
+            popuplayertitle: dados.camada,
+            visible: true,
             source: new ol.source.TileWMS({
-                url: urlWmsAtual.split('?')[0],
+                url: dados.urlBase,
                 params: {
-                    'LAYERS': camadaNome,
-                    'TILED': true,
-                    'FORMAT': 'image/png',
-                    'TRANSPARENT': true
+                    LAYERS: dados.camada,
+                    STYLES: dados.estilos,
+                    VERSION: dados.versao,
+                    TILED: true,
+                    FORMAT: "image/png",
+                    TRANSPARENT: true
                 },
-                serverType: 'geoserver'
-            }),
-            title: `${nomeInstituicaoAtual} - ${camadaTitulo}`
+                serverType: "geoserver",
+                crossOrigin: "anonymous"
+            })
         });
 
-        // Adiciona ao mapa
-        map.addLayer(novaCamadaWMS);
-        alert(`Camada [${camadaTitulo}] adicionada com sucesso ao mapa!`);
-    };
-}
- 
+        map.addLayer(camadaWms);
+
+        if (typeof wms_layers !== "undefined" && Array.isArray(wms_layers)) {
+            wms_layers.push([camadaWms, 0]);
+        }
+
+        if (typeof layerSwitcher !== "undefined" && typeof layerSwitcher.renderPanel === "function") {
+            layerSwitcher.renderPanel();
+        }
+
+        alert(`Camada "${dados.camada}" adicionada ao mapa!`);
+    });
+});
+
+
+
+
+
 //Popup de opções de operações sobre a camada
 // 1. Abertura do Popup ao clicar nos três pontos (...) no LayerSwitcher
 function abrirPopupOpcoesCamada(event, lyr, lyrTitle) {
