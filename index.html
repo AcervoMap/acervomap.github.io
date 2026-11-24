@@ -218,8 +218,8 @@
                                                             <p class="title-submenu">Submenu de Dados Externos</p>
                                                             <span>Permite visualizar fontes de dados externos e geoserviços no portal: <br> 
                                                             Insira o endereço (URL) de serviços compatíveis com padrões WMS para adicionar novas camadas para combiná-las com o acervo da plataforma.</span>
-                                                            <span>
-                                                                Exemplo de URL compatível: <br> https://geoservicos.inde.gov.br/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers=BNDES:AP_2014&styles=&bbox=-74,-34,-27,6&width=297&height=245&tiled<br>=true&srs=EPSG:4326&format=image/png&transparent=true
+                                                            <span style="overflow-wrap: break-word; word-break: break-all;">
+                                                                Exemplo de URL compatível: <br> https://geoservicos.ibge.gov.br/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers=CCAR:BCIM_Terra_Indigena_A&styles=&bbox=-74,-34,-27,6&width=297&height=245&tiled=true&srs=EPSG:4326&format=image/png&transparent=true
                                                             </span>
                                                     </div>
 
@@ -447,10 +447,12 @@
                 //Define o endereço do serviço WFS e os parâmetros da operação GetFeature,
                 var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Municipios_alto_potencial_energético_solar&SRSNAME=EPSG:3857";
 
+                //Define função alternativa caso a conexão direta falhe
                 function fetchWithFallback(u) {
-                    //Executa a requisição HTTP diretamente ao GeoServer.
+                    //Executa inicialmente a requisição HTTP diretamente ao GeoServer.
                     return fetch(u)
                         .then(function (r) {
+                            // Verifica se a resposta HTTP foi bem-sucedida.
                             if (!r.ok) throw new Error("Bad response");
                             return r.text();
                         })
@@ -463,22 +465,26 @@
                                 });
                         });
                 }
+                //Atualiza o título da camada no painel de visualização, exibindo um indicador de carregamento enquanto os dados são solicitados
                 lyr_Municipioscomaltopotencialenergticosolar_3.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+
+                // Executa a requisição WFS e aguarda o retorno dos dados
                 fetchWithFallback(url)
                     .then(function (response) {
                         if (typeof callback === "function") {
                             lyr_Municipioscomaltopotencialenergticosolar_3.set('title', title);
                             layerSwitcher.renderPanel();
-                            callback(null, response); // Pass null as error
+                            callback(null, response);
                         } else {
                             console.error("Callback not defined.");
                         }
                     })
+                    // Executa este bloco caso ocorram falhas
                     .catch(function (error) {
                         if (typeof callback === "function") {
                             lyr_Municipioscomaltopotencialenergticosolar_3.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
                             layerSwitcher.renderPanel();
-                            callback(error, null); // Pass the error
+                            callback(error, null);
                         } else {
                             lyr_Municipioscomaltopotencialenergticosolar_3.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
                             layerSwitcher.renderPanel();
