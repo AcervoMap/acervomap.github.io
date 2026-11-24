@@ -488,7 +488,6 @@ section .content{
 .subtitle_tab{
     margin: 5% 0 10% 0;
     color: #3D6E7A;
-    
 }
 
 #Desenhar_no_mapa:checked ~ section .content-1{

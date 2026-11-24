@@ -2227,13 +2227,12 @@ if (fileInput) {
                 // Ajusta o zoom do mapa para enquadrar o limite do arquivo importado
                 map.getView().fit(drawSource.getExtent(), { duration: 800, padding: [50, 50, 50, 50] });
 
-                alert(`Arquivo [${firstFile.name}] importado com sucesso! ${featuresArquivoImportado.length} feição(ões) identificada(s).`);
             } else {
                 alert("Nenhuma geometria vetorial válida encontrada no arquivo.");
             }
 
         } catch (err) {
-            console.error("Erro ao importar arquivo geográfico:", err);
+            console.error("Erro ao importar arquivo:", err);
             alert("Erro ao ler o arquivo: " + err.message);
         }
     };
@@ -2252,7 +2251,7 @@ if (btnRecortarArquivo) {
         const selectedOption = selectCamada ? selectCamada.options[selectCamada.selectedIndex] : null;
         
         if (!geometriaArquivoImportado || featuresArquivoImportado.length === 0) {
-                alert("Por favor, importe um arquivo geográfico válido antes de executar o recorte.");
+                alert("Por favor, importe um arquivo válido antes de executar o recorte.");
                 return;
             }
 
@@ -2617,7 +2616,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!dados.camada) {
             alert(
-                "Não foi encontrado o parâmetro 'layers' na URL. Ex.: ...&layers=BNDES:AP_2014&..."
+                "Não foi encontrado o parâmetro 'layers' na URL"
             );
             return;
         }
@@ -2626,6 +2625,7 @@ document.addEventListener("DOMContentLoaded", function () {
             title: `INDE - ${dados.camada}`,
             popuplayertitle: dados.camada,
             visible: true,
+            isExternal: true,
             source: new ol.source.TileWMS({
                 url: dados.urlBase,
                 params: {
@@ -2651,13 +2651,8 @@ document.addEventListener("DOMContentLoaded", function () {
             layerSwitcher.renderPanel();
         }
 
-        alert(`Camada "${dados.camada}" adicionada ao mapa!`);
     });
 });
-
-
-
-
 
 //Popup de opções de operações sobre a camada
 // 1. Abertura do Popup ao clicar nos três pontos (...) no LayerSwitcher
@@ -2700,12 +2695,10 @@ function abrirPopupOpcoesCamada(event, lyr, lyrTitle) {
         }
     }
 
-    // Força a validação por referência direta das variáveis das camadas no Layers.js se existirem no escopo global
     var isDirectMatch = (
         (typeof lyr_CadastroAmbientalRuralCAR_16 !== 'undefined' && lyr === lyr_CadastroAmbientalRuralCAR_16) ||
         (typeof lyr_sigef_piaui_completo !== 'undefined' && lyr === lyr_sigef_piaui_completo) ||
         (typeof lyr_MunicpiosPiau_28 !== 'undefined' && lyr === lyr_MunicpiosPiau_28) ||
-        // Caso a variável global do SIGEF tenha outro nome exato, adicione aqui ou baseie-se no título da camada:
         (lyrTitle && (
             lyrTitle.includes('Cadastro Ambiental Rural') || 
             lyrTitle.includes('Sistema de Gestão Fundiária') || 
@@ -2748,7 +2741,7 @@ function abrirPopupOpcoesCamada(event, lyr, lyrTitle) {
             popup.style.display = 'none';
         }
     };
-}
+} 
 
 //Tabela de atributos
 //Fonte: https://www.youtube.com/watch?v=eAQcBGMPQTk&t=3757s
@@ -2805,7 +2798,6 @@ if (btnFecharTabela) {
 }
 
 // Ação ao clicar no botão "Tabela de Atributos" do menu de opções
-// Variáveis globais para o destaque da feição selecionada
 let camadaDestaqueAtributos = null;
 let vetorSourceAtributos = new ol.source.Vector();
 
@@ -2941,7 +2933,7 @@ if (btnTabelaAtributos) {
         } else {
             // Comportamento original para as demais camadas vetoriais locais
             if (!lyr.getSource || typeof lyr.getSource().getFeatures !== 'function') {
-                alert("Esta camada não possui dados vetoriais locais para exibir na tabela.");
+                alert("Esta camada ainda não possui dados para exibir na tabela.");
                 return;
             }
 
@@ -3192,7 +3184,7 @@ if (btnMetadado) {
             // Abre o PDF numa nova aba do navegador
             window.open(pdfUrl, '_blank');
         } else {
-            alert("Nenhum documento de metadados (PDF) associado a esta camada.");
+            alert("Nenhum metadado associado a esta camada.");
         }
     
        var idMetadadoMGB = LayerSwitcher.obterUuidCamadaMGB(camadaSelecionadaOpcoes);

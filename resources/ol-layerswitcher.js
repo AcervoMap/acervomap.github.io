@@ -585,18 +585,29 @@ class LayerSwitcher extends Control {
             label.innerHTML = lyrName;
             li.appendChild(label);
 
-            
-            const menuDots = document.createElement('span');
-            menuDots.innerHTML = '&hellip;';
-            menuDots.title = 'Opções da camada';
-            menuDots.className = 'layer-options-dots';
-            menuDots.onclick = function (e) {
-                e.stopPropagation();
-                abrirPopupOpcoesCamada(e, lyr, lyrTitle);
-            };
-            li.appendChild(menuDots);
+        
+            const isBaseLayer =
+            lyr.get('type') === 'base' ||
+            (typeof lyr_OSMStandard_0 !== 'undefined' && lyr === lyr_OSMStandard_0) ||
+            (typeof lyr_GoogleHybrid_1 !== 'undefined' && lyr === lyr_GoogleHybrid_1) ||
+            (typeof lyr_ESRITopo_2 !== 'undefined' && lyr === lyr_ESRITopo_2);
 
-            
+            const isExternalLayer =
+                Boolean(lyr.get('isExternal')) ||
+                (typeof lyrTitle === 'string' && lyrTitle.trim().startsWith('INDE - '));
+
+            if (!isBaseLayer && !isExternalLayer) {
+                const menuDots = document.createElement('span');
+                menuDots.innerHTML = '&hellip;';
+                menuDots.title = 'Opções da camada';
+                menuDots.className = 'layer-options-dots';
+                menuDots.onclick = function (e) {
+                    e.stopPropagation();
+                    abrirPopupOpcoesCamada(e, lyr, lyrTitle);
+                };
+                li.appendChild(menuDots);
+            }
+
             if (legendaHtml !== '') {
                 const legendUl = document.createElement('ul');
                 legendUl.className = 'layer-legend-container';
