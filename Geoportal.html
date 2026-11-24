@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="AcervoMAP: plataforma web para consulta, visualização e reutilização da produção cartográfica acadêmica da UFPI.">
+        <link rel="preload" as="style" href="./resources/ol.css" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" as="style" href="resources/fontawesome-all.min.css" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" as="style" href="resources/photon-geocoder-autocomplete.min.css" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" as="style" href="./resources/ol-layerswitcher.css" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="stylesheet" href="./resources/qgis2web.css">
+        <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"></noscript>
+        <link rel="preload" as="image" href="images/Emblema-AcervoMap-UFPI.webp" fetchpriority="high">
+        <style>
+        html, body {
+            background-color: #ffffff;
+        }
+        .ol-control > * {
+            background-color: #f8f8f8!important;
+            color: #444444!important;
+            border-radius: 0px;
+        }
+        .ol-attribution a, .gcd-gl-input::placeholder, .search-layer-input-search::placeholder {
+            color: #444444!important;
+        }
+        .search-layer-input-search {
+            background-color: #f8f8f8!important;
+        }
+        .ol-control > *:focus, .ol-control >*:hover {
+            background-color: rgba(248, 248, 248, 0.7)!important;
+        } 
+        .ol-control {
+            background-color: rgba(255,255,255,.4) !important;
+            padding: 2px !important;
+        } 
+        #page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #1b3a41;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            transition: opacity 0.5s ease;
+        }
+
+        @keyframes girar {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner-logo {
+            animation: girar 4s linear infinite;
+            object-fit: contain;
+        }
+
+
+        </style>
+
+        <title>UFPI AcervoMAP</title>
+
+        <!-- Coletar Web Vitals  por DebugBear -->
+        <script>
+            (function(){var d="dbbRum",w=window,o=document,a=addEventListener,c=function(t,p,ax){var e=o.createElement(t);var i=p&&p.length||0;var j=ax&&ax.length||0;while(i--){e[p[i][0]]=p[i][1];}while(j--){e.setAttribute(ax[j][0],ax[j][1]);}o.head.appendChild(e);};w[d]=w[d]||[];
+            ["error","unhandledrejection"].forEach(function(t){a(t,function(e){w[d].push([t,e])});});c("link",[["rel","preload"],["as","fetch"],["crossOrigin","anonymous"],["rel","preload"],["as","fetch"],["crossOrigin","anonymous"],["href","https://cdn.debugbear.com/crTSSE0ifDoQ.config.json"]]);c("script",[["async",true],["crossOrigin","anonymous"]],
+            [["snippetKey","crTSSE0ifDoQ"],["integrity","sha384-yKrvfR2ibJqC7CE39yyYGHpYscZjDCijwAk4gOkzqrIoIdjUOvB5lRadMf4NLno7"],["src","https://cdn.debugbear.com/rum-1.2.0.js"]]);})()
+        </script>
+
+
+    </head>
+    <body>
+       <div id="page-loader">
+            <img src="images/Emblema-AcervoMap-UFPI.webp" alt="Carregando AcervoMAP" class="spinner-logo" width="100" height="100">
+            <div style="display: flex;" class="titulo_pag">
+                                <h2 style="color: #f8f8f8;"> UFPI Acervo</h2>
+                                <h2 style="color: #FFCC33;"> MAP</h2>
+            </div>
+        </div>
+        <header>
+                <div class="cabecalho">
+                    <section class="logo">
+                        <img src="images/logo.webp" alt="Logo UFPI" class="brasao" width="40" height="40">
+                        <img src="images/GeoInova.webp" alt="Logo GeoInova" class="GeoInova" width="50" height="42">
+                        <div class="separador-header"></div>
+                        <img src="images/Emblema-AcervoMap-UFPI.webp" alt="Logo SIGWeb" width="40" height="40" fetchpriority="high" decoding="async" >
+                        <div class="titulo">
+                            <div style="display: flex;" class="titulo_pag">
+                                <h2> UFPI Acervo</h2>
+                                <h2 style="color: #FFCC33;"> MAP</h2>
+                            </div>
+                            <h4>Engenharia Cartográfica e de Agrimensura</h4>
+                        </div>
+                        <div class="separador-header"></div>
+                        <p class="TCC">Mapeamento do Potencial Geográfico Energético Solar do Piauí</p>
+                        
+                    </section>
+                    <section class="button-inf">
+                    <a class="btn-home" href="/LandingPage.html" title="Voltar a página inicial"><i class="fas fa-home" aria-label="Voltar para a página inicial"></i></a>
+                    <button id="btn-ajuda" class="btn-ajuda" data-bs-toggle="modal" data-bs-target="#ajuda" aria-label="menu de ajuda" title="Ajuda"><i class="fa fa-question-circle"></i></button>
+
+                    <!-- https://getbootstrap.com/docs/5.3/components/modal/-->
+                    <div class="modal fade" id="ajuda" tabindex="-1"  aria-hidden="true">
+                    
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4>Ajuda</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- https://getbootstrap.com/docs/5.3/components/navs-tabs/ -->
+                                    <nav>
+                                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Barra de Ferramentas do Mapa</button>
+                                            </li>
+                                            <li class="nav-item" role="funcionalidades">
+                                                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Outras Funcionalidades</button>
+                                            </li>    
+                                        </ul>
+                                    </nav>
+                                       <div class="tab-content">
+                                            <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                    
+                                                <div class="barra-ferramentas">
+                                                    
+                                                    <div class="ferramenta" style="margin-top: 3%;">
+                                                        <i class="fas fa-ruler"></i> 
+                                                        <span>Medir distâncias e áreas</span>
+                                                    </div>
+                                                    <div class="ferramenta">
+                                                        <i class="fas fa-plus"></i> 
+                                                        <span>Zoom in</span>
+                                                    </div>
+                                                    <div class="ferramenta">
+                                                        <i class="fas fa-minus"></i> 
+                                                        <span>Zoom out</span>
+                                                    </div>
+                                                    <div class="ferramenta">
+                                                        <i class="fas fa-home"></i> 
+                                                        <span>Voltar a página inicial</span>
+                                                    </div>
+                                                    <div class="ferramenta">
+                                                        <img src="/Apresentacao/images/OpenLayers.png" alt="Controle de camadas" loading="lazy">
+                                                        <span>Controle de camadas</span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                                                <nav>
+                                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                                        <li class="nav-item" role="presentation">
+                                                            <button class="nav-link active" id="operacoes-tab" data-bs-toggle="tab" data-bs-target="#operacoes-tab-pane" type="button" role="tab" aria-controls="operacoes-tab-pane" aria-selected="true">Operações sobre Camadas</button>
+                                                        </li>
+                                                        <li class="nav-item" role="presentation">
+                                                            <button class="nav-link" id="submenus-tab" data-bs-toggle="tab" data-bs-target="#submenus-tab-pane" type="button" role="tab" aria-controls="submenus-tab-pane" aria-selected="false">Submenus</button>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            <div class="tab-content">
+                                                <div class="tab-pane fade show active" id="operacoes-tab-pane" role="tabpanel" aria-labelledby="operacoes-tab" tabindex="0">
+                                                    <img style="width: 100%; height: auto;" src="/Apresentacao/images/Operacoes.png" alt="Menu de operações sobre as camadas" loading="lazy">
+                                                    <div class="barra-ferramentas">
+                                                    
+                                                        <div class="ferramenta" style="margin-top: 3%;">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/metadado.png" alt="Metadado" loading="lazy" aria-hidden="true">
+                                                            <span>Exibe o metadado associado à camada</span>
+                                                            
+                                                        </div>
+                                                        <div class="ferramenta">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/download.png" alt="Download" loading="lazy" aria-hidden="true">
+                                                            <span>Permite o download em formato GeoTIFF (raster) ou SHP (vetor) da respectiva camada</span>
+                                                        </div>
+                                                        <div class="ferramenta">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/URL_OGC.png" alt="Metadado" loading="lazy" aria-hidden="true">
+                                                            <span>Mostra a URL WMS (raster) ou WFS (vetor) da camada para fins de compartilhamento com outras plataformas</span>
+                                                        </div>
+                                                        <div class="ferramenta">
+                                                            <img style="width: 70px; height: auto; border-radius: 0;" src="/Apresentacao/images/atributos.png" alt="Atributos" loading="lazy" aria-hidden="true">
+                                                            <span>Permite consultar os dados alfanuméricos associados às feições geográficas e selecionar registros específicoS</span>
+                                                        </div>
+                                                        <div class="ferramenta">
+                                                            <input style="max-width: 5%;" type="range" min="0" max="0.2" step="0.05" value="0.1">
+                                                            <span> Controla a opacidade da camada, permitindo a visualização simultânea de múltiplas camadas</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-content">
+                                                <div class="tab-pane fade" id="submenus-tab-pane" role="tabpanel" aria-labelledby="submenu-tab" tabindex="0">
+        
+                                                    <div class="barra-ferramentas">
+                                                            <p class="title-submenu">Submenu de Pesquisa</p>
+                                                            <span>Este menu apresenta duas opções de pesquisa: <br> No primeiro digite o nome do municipio e ao clicar no botão de pesquisa, o mapa se desloca para a posição do local pesquisado e um marcador é exibido.
+                                                            <br> No segundo, insira as coordenadas geográficas em graus decimais e ao clicar no botão de localizar, o mapa se desloca para a posição do local pesquisado e um marcado é exibido.</span>
+                                                            </span>
+                                                            <img src="/Apresentacao/images/Pesquisa.png" alt="Menu de pesquisa" loading="lazy" aria-hidden="true">
+                                                        
+                                                            <p class="title-submenu">Submenu de Recorte Espacial</p>
+                                                            <span>Este menu apresenta duas opções principais para a extração de dados geoespaciais: <br> 
+                                                            1. Desenhar Área: Utilize as ferramentas de desenho disponíveis na interface (como polígonos, linhas ou retângulos) para delimitar o perímetro de interesse diretamente sobre o mapa. Aplique a uma camada cadastrada na pltaforma e receba o recorte em formato GeoTIFF (raster) e GeoPackage (Vetor) <br> </span>
+                                                            <img src="/Apresentacao/images/recorte_raster_desenhar.png" alt="Recorte Espacial por Desenho" loading="lazy" aria-hidden="true">
+
+                                                            <span>2. Importar por Arquivo: Envie um arquivo vetorial compatível (como Shapefile, KML ou KMZ) para realizar o recorte dos dados em áreas que interseccionam este arquivo.</span>
+                                                            <img src="/Apresentacao/images/Recorte_desenhar.png" alt="Recorte Espacial por Arquivo" loading="lazy" aria-hidden="true">
+
+                                                            <p class="title-submenu">Submenu de Dados Externos</p>
+                                                            <span>Permite visualizar fontes de dados externos e geoserviços no portal: <br> 
+                                                            Insira o endereço (URL) de serviços compatíveis com padrões WMS para adicionar novas camadas para combiná-las com o acervo da plataforma.</span>
+                                                            <span style="overflow-wrap: break-word; word-break: break-all;">
+                                                                Exemplo de URL compatível: <br> https://geoservicos.ibge.gov.br/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers=CCAR:BCIM_Terra_Indigena_A&styles=&bbox=-74,-34,-27,6&width=297&height=245&tiled=true&srs=EPSG:4326&format=image/png&transparent=true
+                                                            </span>
+                                                    </div>
+
+                                                    
+                                                </div>
+
+                                            </div>
+                                            
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    
+                
+                </div>
+                       
+                    </section>
+                </div>
+            </header>
+            <main>
+                <nav id="sidebar">
+                    <ul>
+                        <li> 
+                            <a href="#">
+                                <img src="images/icons8-pesquisar.svg" alt="Pesquisar" width="24" height="24" style="margin-bottom: 5%;" aria-hidden="true" >
+                                <span class="text-menu">Pesquisar </span>
+                            </a>
+                        </li>
+                        <li> 
+                            <a href="#">
+                                <img src="images/icons8-recortar-100.png" alt="Recorte espacial" width="24" height="24" style="margin-bottom: 5%;" aria-hidden="true">
+                                <span class="text-menu">Recorte espacial</span>
+                            </a>  
+                            
+                        </li>
+                        <li> 
+                            <a href="#">
+                                <img src="images/icons8-globo-100.png" alt="Dados externos" width="24" height="24" style="margin-bottom: 5%;" aria-hidden="true">
+                                <span class="text-menu">Dados externos</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div id="sub-menu-pesquisar" class="sub-menu" style="display: none;">
+                        <div class="titulo_sub-menu">
+                            <img src="images/icons8-pesquisar-cinza.svg" alt="" style="width: 8%; height: 8%; margin-right: 5%;" loading="lazy" aria-hidden="true">
+                            <span style="display: flex; flex-shrink: 1;">Pesquisar </span>
+                            <button id="btn-fechar-sub-menu-pesquisar" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt="" aria-label="Fechar sub-menu"></button>
+                        </div>
+                        <p class="titulo_item_sub-menu">Localização por município ou por coordenadas geográficas <br> <br> Município </p> 
+                        <div id="busca-municipio-container">
+                        <input id="input-municipio" class="campo" placeholder="Digite o nome do Municipio">
+                        <button id="btn-municipio" class="button_campo"> <i class="fa fa-search"></i>
+                            <span>Pesquisar </span>
+                        </button>
+                        </div>                               
+
+                        <div class="separador"></div>
+
+                        <p class="titulo_item_sub-menu">Insira as coordenadas em graus decimais</p>
+                        <div class="coordenadas_container">
+                            <p class="titulo_item_sub-menu">Latitude</p>
+                            <input id="input-lat" class="campo" placeholder="">
+                            <p class="titulo_item_sub-menu">Longitude</p>
+                            <input id="input-long" class="campo" placeholder="">
+                        </div>
+                        <button id="btn-localizar" class="button_campo"> <i class="fa fa-map-marker-alt"></i>
+                            <span>Localizar</span>
+                        </button>
+                </div>
+                <div id="sub-menu-recorte" class="sub-menu" style="display: none;">
+                    <div class="titulo_sub-menu">
+                        <img src="images/icons8-recortar-preto.png" alt="" style="width: 8%; height: 8%; margin-right: 5%;" loading="lazy" aria-hidden="true">
+                        <span style="display: flex; flex-shrink: 1;">Recorte espacial </span>
+                        <button id="btn-fechar-sub-menu-recorte" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt="Botão para fechar" aria-label="fechar" loading="lazy"></button>
+                    </div>
+                    <p class="titulo_item_sub-menu"><br> Defina uma área de interesse para realizar operações de recorte espacial</p> 
+                    <div class="container-tab">
+                        <input type="radio" name="slider" id="Desenhar_no_mapa" checked>
+                        <input type="radio" name="slider" id="Importar_arquivo">
+                        <nav class="tabs">
+                            <label for="Desenhar_no_mapa" class="Desenhar_no_mapa">Desenhar</label>
+                            <label for="Importar_arquivo" class="Importar_arquivo">Arquivo</label>
+                            <div class="slider"></div>
+                        </nav>
+                        <section class="content-tab">
+                            <div class="content content-1">
+                                <p class="subtitle_tab"> Escolha a forma e adicione ao mapa</p>
+                                <span class="input-group">
+                                    <label class="input-group-text" for="forma">Forma:</label>
+                                    <select class="form-select" id="forma">
+                                        <option value="None">Nenhum</option>
+                                        <option value="Circle">Círculo</option>
+                                        <option value="Square">Quadrado</option>
+                                        <option value="Box">Retângulo</option>
+                                        <option value="Star">Estrela</option>
+                                        <option value="Poligono">Poligono</option>
+                                    </select>
+                                    <input class="form-control" type="button" value="Limpar" id="Limpar">
+                                </span>
+                                <div class="recorte_camada">
+                                    <p> Aplicar a uma camada </p> 
+                                    <select id="select-recorte" class="campo">
+                                        <option value="">Selecione uma camada...</option>
+                                    </select>
+                                    <button id="btn-executar-recorte" class="button_campo"> <i class="fa fa-cut" aria-hidden="true"></i>  
+                                        <span> Recortar </span>
+                                </button>
+                        </div>
+                            </div>
+                            <div class="content content-3">
+                                <p class="subtitle_tab"> Importe um arquivo de uma área (KMZ, KML ou SHP)</p>
+                                <input type="file" id="file-input" accept=".kml,.kmz, .shp, .shx, .prj, .dbf, .cpg">
+                                <div class="recorte_camada">
+                                    <p> Aplicar a uma camada </p> 
+                                    <select id="select-recorte-arquivo" class="campo">
+                                        <option value="">Selecione uma camada...</option>
+                                    </select>
+                                    <button id="btn-executar-recorte-arquivo" class="button_campo"> <i class="fa fa-cut" aria-hidden="true"></i>  
+                                        <span> Recortar </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+                        
+                    </div>
+
+                </div>
+                <div id="sub-menu-externo" class="sub-menu" style="display: none;">
+                        <div class="titulo_sub-menu">
+                            <img src="images/icons8-globo-preto.png" alt="" style="width: 8%; height: 8%; margin-right: 5%;" aria-hidden="true">
+                            <span style="display: flex; flex-shrink: 1;"> Dados externos </span>
+                            <button id="btn-fechar-sub-menu-externo" class="btn-fechar-sub-menu"><img src="images/icons8-fechar-janela-48.png" alt="Fechar"></button>
+                        </div>
+                            <p> <br> URL WMS </p> 
+                            <div class="url">
+                                <input id="input-url-wms" class="campo" placeholder="url wms da camada">
+                                <button id="btn-url-wms" class="button_campo" > <i class="fas fa-plus" aria-hidden="true"></i>
+                                    <span>Adicionar</span>
+                                </button>
+                                <p>Exemplo compatível: <br> https://geoservicos.ibge.gov.br/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers=CCAR:BCIM_Unidade_Protecao_Integral_A&styles=&bbox=-73.999,-33.605,-32.349,5.278&width=263&height=245&tiled=true&srs=EPSG:4326&format=image/png&transparent=true</span>
+                            </div>
+                </div>
+                <div id="popup-camada-opcoes" class="popup-camada-opcoes" style="display:none">
+                    <div class="popup-camada-opcoes-header">
+                        <p>Operações sobre a Camada</p>
+                        <button id="btn-close-popup-opcao">&times;</button>
+                    </div>
+                    <div class="popup-camada-opcoes-content">
+                        <div class="operacoes">
+                            <button id="btn-metadado" title="Exibir Metadados (PDF)"><i class="fas fa-file-pdf" aria-label="Metadado"></i></button>
+                            <button id="btn-tabela-atributos" title="Exibir Tabela de Atributos"><i class="fas fa-table" aria-label="Tabela de atributos"></i></button>                      
+                            <button id="btn-wms" title="Copiar Link WMS"><i class="fas fa-link" aria-label="Link WMS da camada"></i></button>
+                            <button id="btn-wfs" title="Copiar Link WFS"><i class="fas fa-link" aria-label="Link WFS da camada"></i></button>
+                            <button id="btn-download-vetor" title="Download Shapefile/GeoPackage"><i class="fas fa-download" aria-label="Download Shapefile/GeoPackage"></i></button>
+                            <button id="btn-download-raster" title="Download Geotiff"><i class="fas fa-file-archive" aria-label="Download GeoTIFF"></i></button>
+                        </div>
+                        <div class="opacidade">
+                            <label for="controle-opacidade">Opacidade</label>
+                            <input type="range" id="controle-opacidade" min="0" max="1" step="0.05" value="1">
+                        </div>
+                    </div>
+                </div>
+                <div id="atributos-container" class="atributos-container" style="display:none;">
+                    <div class="atributos-header">
+                        <span id="atributos-titulo">Tabela de Atributos</span>
+                        <button id="btn-fechar-tabela" class="btn-fechar-tabela">&times;</button>      
+                    </div>
+                    <div class="atributos-body">
+                        <table id="atributos-dados" class="atributos-dados">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="modal-url-overlay" class="modal-url" style="display: none;">
+                    <div class="url-content">
+                        <div class="url-header">
+                            <span id="url-titulo">URL WMS</span>
+                            <button type="button" id="btn-fechar-url" class="btn-fechar-url">&times;</button>
+                        </div>
+                        <div class="url-body">
+                            <input type="text" id="url-copiar" readonly>
+                        </div>
+                        <div class="modal-url-footer">
+                            <button type="button" id="btn-url-copiar" class="btn-url-copiar">Copiar</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="map">
+                    <img src="images/NorthArrow_02.svg" alt="Norte" class="north-icon">
+                    <div id="popup" class="ol-popup">
+                        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                        <div id="popup-content"></div>
+                    </div>
+                </div>
+            </main>  
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <script src="resources/qgis2web_expressions.js" defer></script>
+        <script src="./resources/ol.js" defer></script>
+        <script src="./resources/ol-layerswitcher.js" defer></script>
+        <script src="resources/photon-geocoder-autocomplete.min.js" defer></script>
+        <script src="layers/usinas_foto_editado_15.js" defer></script>
+        <script>
+            // Criação da função TextStyle
+            window.createTextStyle = function(feature, resolution, labelText, labelFont, labelFill, placement, bufferColor, bufferWidth) {
+                return new ol.style.Text({
+                    text: labelText,
+                    font: labelFont,
+                    fill: new ol.style.Fill({ color: labelFill }),
+                    stroke: new ol.style.Stroke({ color: bufferColor, width: bufferWidth }),
+                    placement: placement,
+                    overflow: true
+                });
+            };
+        </script>       
+        <script src="styles/Municipioscomaltopotencialenergticosolar_3_style.js" defer></script><script src="styles/Linhadetransmissoplanejado_11_style.js" defer></script><script src="styles/SubestaesExpansoPlanejada_12_style.js" defer></script><script src="styles/SubestaesBaseExistente_13_style.js" defer></script><script src="styles/Linhadetransmissaoexistente_14_style.js" defer></script><script src="styles/usinas_foto_editado_15_style.js" defer></script><script src="styles/CadastroAmbientalRuralCAR_16_style.js" defer></script><script src="styles/SistemadeGestoFundiriaSIGEF_17_style.js" defer></script><script src="styles/BiomasMAPBIOMAS_18_style.js" defer></script><script src="styles/reasdeconservaoICMBio_20_style.js" defer></script><script src="styles/RedeHidrogrficaANA_22_style.js" defer></script><script src="styles/Piau_27_style.js" defer></script><script src="styles/MunicpiosPiau_28_style.js" defer></script><script src="styles/Brasil_29_style.js" defer></script>
+        <script>
+            // Declara a função responsável por solicitar os dados vetoriais ao GeoServer.
+            function fetchWFSMunicipioscomaltopotencialenergticosolar_3Data(title, callback) {
+                //Define o endereço do serviço WFS e os parâmetros da operação GetFeature,
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Municipios_alto_potencial_energético_solar&SRSNAME=EPSG:3857";
+
+                //Define função alternativa caso a conexão direta falhe
+                function fetchWithFallback(u) {
+                    //Executa inicialmente a requisição HTTP diretamente ao GeoServer.
+                    return fetch(u)
+                        .then(function (r) {
+                            // Verifica se a resposta HTTP foi bem-sucedida.
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            //Utiliza o serviço AllOrigins como intermediário para tentar acessar os dados caso a requisição direta não funcione.
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+                //Atualiza o título da camada no painel de visualização, exibindo um indicador de carregamento enquanto os dados são solicitados
+                lyr_Municipioscomaltopotencialenergticosolar_3.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+
+                // Executa a requisição WFS e aguarda o retorno dos dados
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_Municipioscomaltopotencialenergticosolar_3.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response);
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    // Executa este bloco caso ocorram falhas
+                    .catch(function (error) {
+                        if (typeof callback === "function") {
+                            lyr_Municipioscomaltopotencialenergticosolar_3.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            callback(error, null);
+                        } else {
+                            lyr_Municipioscomaltopotencialenergticosolar_3.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            console.error("Error fetching Municipioscomaltopotencialenergticosolar_3 data:", error);
+                        }
+                    });
+            }
+        </script>
+        <script>
+            function fetchWFSLinhadetransmissoplanejado_11Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Linha_transmissão_planejado&SRSNAME=EPSG:3857";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            // Fallback AllOrigins
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                // Imposta un'icona di caricamento durante il fetch
+                lyr_Linhadetransmissoplanejado_11.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_Linhadetransmissoplanejado_11.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response); // Pass null as error
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    .catch(function (error) {
+                        if (typeof callback === "function") {
+                            lyr_Linhadetransmissoplanejado_11.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            callback(error, null); // Pass the error
+                        } else {
+                            lyr_Linhadetransmissoplanejado_11.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            console.error("Error fetching Linhadetransmissoplanejado_11 data:", error);
+                        }
+                    });
+            }
+        </script>
+        <script>
+            function fetchWFSSubestaesExpansoPlanejada_12Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Subestações_Expansão_Planejada&SRSNAME=EPSG:3857";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            // Fallback AllOrigins
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                // Imposta un'icona di caricamento durante il fetch
+                lyr_SubestaesExpansoPlanejada_12.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_SubestaesExpansoPlanejada_12.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response); // Pass null as error
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    .catch(function (error) {
+                        if (typeof callback === "function") {
+                            lyr_SubestaesExpansoPlanejada_12.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            callback(error, null); // Pass the error
+                        } else {
+                            lyr_SubestaesExpansoPlanejada_12.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            console.error("Error fetching SubestaesExpansoPlanejada_12 data:", error);
+                        }
+                    });
+            }
+        </script>
+        <script>
+            function fetchWFSSubestaesBaseExistente_13Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Subestações_Base_Existente&SRSNAME=EPSG:3857";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            // Fallback AllOrigins
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                // Imposta un'icona di caricamento durante il fetch
+                lyr_SubestaesBaseExistente_13.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_SubestaesBaseExistente_13.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response); // Pass null as error
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    .catch(function (error) {
+                        if (typeof callback === "function") {
+                            lyr_SubestaesBaseExistente_13.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            callback(error, null); // Pass the error
+                        } else {
+                            lyr_SubestaesBaseExistente_13.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            console.error("Error fetching SubestaesBaseExistente_13 data:", error);
+                        }
+                    });
+            }
+        </script>
+        <script>
+            function fetchWFSLinhadetransmissaoexistente_14Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Linha_transmissao_existente&SRSNAME=EPSG:3857";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            // Fallback AllOrigins
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                // Imposta un'icona di caricamento durante il fetch
+                lyr_Linhadetransmissaoexistente_14.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_Linhadetransmissaoexistente_14.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response); // Pass null as error
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    .catch(function (error) {
+                        if (typeof callback === "function") {
+                            lyr_Linhadetransmissaoexistente_14.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            callback(error, null); // Pass the error
+                        } else {
+                            lyr_Linhadetransmissaoexistente_14.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            console.error("Error fetching Linhadetransmissaoexistente_14 data:", error);
+                        }
+                    });
+            }
+        </script>
+
+        <!-- ----------------------------------------
+        CADASTRO AMBIENTAL RURAL (CAR)
+        -------------------------------------------- -->
+         <script>
+            function fetchWFSCadastroAmbientalRuralCAR_16Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Cadastro_Ambiental_Rural&SRSNAME=EPSG:3857";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            // Fallback AllOrigins
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                // Imposta un'icona di caricamento durante il fetch
+                lyr_CadastroAmbientalRuralCAR_16.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_CadastroAmbientalRuralCAR_16.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response); // Pass null as error
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    .catch(function (error) {
+                        if (typeof callback === "function") {
+                            lyr_CadastroAmbientalRuralCAR_16.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            callback(error, null); // Pass the error
+                        } else {
+                            lyr_CadastroAmbientalRuralCAR_16.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            console.error("Error fetching CadastroAmbientalRuralCAR_16 data:", error);
+                        }
+                    });
+            }
+        </script> 
+
+        <!--
+        -------------------------------------------------
+        SIGEF
+        ----------------------------------------------- -->
+        <script>
+            function fetchWFSSistemadeGestoFundiriaSIGEF_17Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Sistema_de_Gestao_Fundiaria&SRSNAME=EPSG:3857";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            // Fallback AllOrigins
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                // Imposta un'icona di caricamento durante il fetch
+                lyr_SistemadeGestoFundiriaSIGEF_17.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_SistemadeGestoFundiriaSIGEF_17.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response); // Pass null as error
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    .catch(function (error) {
+                        if (typeof callback === "function") {
+                            lyr_SistemadeGestoFundiriaSIGEF_17.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            callback(error, null); // Pass the error
+                        } else {
+                            lyr_SistemadeGestoFundiriaSIGEF_17.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            console.error("Error fetching SistemadeGestoFundiriaSIGEF_17 data:", error);
+                        }
+                    });
+            }
+        </script> 
+        <script>
+            function fetchWFSBiomasMAPBIOMAS_18Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Biomas_mapbiomas&SRSNAME=EPSG:3857";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            // Fallback AllOrigins
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                // Imposta un'icona di caricamento durante il fetch
+                lyr_BiomasMAPBIOMAS_18.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_BiomasMAPBIOMAS_18.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response); // Pass null as error
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    .catch(function (error) {
+                        if (typeof callback === "function") {
+                            lyr_BiomasMAPBIOMAS_18.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            callback(error, null); // Pass the error
+                        } else {
+                            lyr_BiomasMAPBIOMAS_18.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            console.error("Error fetching BiomasMAPBIOMAS_18 data:", error);
+                        }
+                    });
+            }
+        </script>
+        <script>
+            function fetchWFSreasdeconservaoICMBio_20Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:areas_de_conservacao&SRSNAME=EPSG:3857";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            // Fallback AllOrigins
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                // Imposta un'icona di caricamento durante il fetch
+                lyr_reasdeconservaoICMBio_20.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_reasdeconservaoICMBio_20.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response); // Pass null as error
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    .catch(function (error) {
+                        if (typeof callback === "function") {
+                            lyr_reasdeconservaoICMBio_20.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            callback(error, null); // Pass the error
+                        } else {
+                            lyr_reasdeconservaoICMBio_20.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            console.error("Error fetching reasdeconservaoICMBio_20 data:", error);
+                        }
+                    });
+            }
+        </script>
+        <script>
+            function fetchWFSRedeHidrogrficaANA_22Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.0.0&REQUEST=GetFeature&TYPENAME=sigweb:Rede_Hidrografica&SRSNAME=EPSG:3857";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            // Fallback AllOrigins
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                // Imposta un'icona di caricamento durante il fetch
+                lyr_RedeHidrogrficaANA_22.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_RedeHidrogrficaANA_22.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response); // Pass null as error
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    .catch(function (error) {
+                        if (typeof callback === "function") {
+                            lyr_RedeHidrogrficaANA_22.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            callback(error, null); // Pass the error
+                        } else {
+                            lyr_RedeHidrogrficaANA_22.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            console.error("Error fetching RedeHidrogrficaANA_22 data:", error);
+                        }
+                    });
+            }
+        </script>
+       <script>
+            function fetchWFSPiau_27Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=sigweb:Piauí&SRSNAME=EPSG:4326&outputFormat=application/json";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            // Fallback AllOrigins
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                // Ícone de carregamento durante o fetch
+                lyr_Piau_27.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_Piau_27.set('title', title);
+                            layerSwitcher.renderPanel(); 
+                            callback(null, response);
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    .catch(function (error) {
+                        lyr_Piau_27.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                        layerSwitcher.renderPanel();
+                        if (typeof callback === "function") {
+                            callback(error, null);
+                        } else {
+                            console.error("Error fetching Piau_27 data:", error);
+                        }
+                    });
+            }
+        </script> 
+        
+        <script>
+            function fetchWFSMunicpiosPiau_28Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=sigweb:Municipios_do_Piaui&SRSNAME=EPSG:4326&outputFormat=application/json";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            // Fallback AllOrigins
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                // Imposta un'icona di caricamento durante il fetch
+                lyr_MunicpiosPiau_28.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_MunicpiosPiau_28.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response); // Pass null as error
+                        } else {
+                            console.error("Callback not defined.");
+                        }
+                    })
+                    .catch(function (error) {
+                        if (typeof callback === "function") {
+                            lyr_MunicpiosPiau_28.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            callback(error, null); // Pass the error
+                        } else {
+                            lyr_MunicpiosPiau_28.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                            layerSwitcher.renderPanel();
+                            console.error("Error fetching MunicpiosPiau_28 data:", error);
+                        }
+                    });
+            }
+        </script>
+    
+       <script>
+            function fetchWFSBrasil_29Data(title, callback) {
+                var url = "https://geoserver-sigweb.duckdns.org/geoserver/wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=sigweb:Brasil&SRSNAME=EPSG:4326&outputFormat=application/json";
+
+                function fetchWithFallback(u) {
+                    return fetch(u)
+                        .then(function (r) {
+                            if (!r.ok) throw new Error("Bad response");
+                            return r.text();
+                        })
+                        .catch(function () {
+                            return fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(u))
+                                .then(function (r) {
+                                    if (!r.ok) throw new Error("Proxy failed");
+                                    return r.text();
+                                });
+                        });
+                }
+
+                lyr_Brasil_29.set('title', '<div class="roller-switcher" title="Fetching WFS data"></div> ' + title);
+                fetchWithFallback(url)
+                    .then(function (response) {
+                        if (typeof callback === "function") {
+                            lyr_Brasil_29.set('title', title);
+                            layerSwitcher.renderPanel();
+                            callback(null, response);
+                        }
+                    })
+                    .catch(function (error) {
+                        lyr_Brasil_29.set('title', '<i class="fa fa-exclamation-triangle" title="Error on fetch data"></i> ' + title);
+                        layerSwitcher.renderPanel();
+                        if (typeof callback === "function") {
+                            callback(error, null);
+                        } else {
+                            console.error("Error fetching Brasil_29 data:", error);
+                        }
+                    });
+            }
+        </script>
+        <script src="./layers/layers.js" type="text/javascript" defer></script> 
+        <script src="./resources/Autolinker.min.js" defer></script>
+        <script src="./resources/qgis2web.js" defer></script> 
+        <script src="resources/control.MiniMap.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/geotiff@2/dist/geotiff.bundle.js"></script>
+        <script src="https://unpkg.com/shpjs@latest/dist/shp.js" defer></script>
+        <script src="https://unpkg.com/@mapbox/shp-write@latest/shpwrite.js" defer></script>
+        <script src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist/geotiff.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const tempoLimiteSeguranca = setTimeout(function() {
+                    liberarInterface();
+                }, 6000);
+
+                if (typeof map !== 'undefined' && map !== null) {
+                    sincronizarCarregamentoWeb(tempoLimiteSeguranca);
+                } else {
+                    let tentativas = 0;
+                    const checarMapa = setInterval(function() {
+                        tentativas++;
+                        if (typeof map !== 'undefined' && map !== null) {
+                            clearInterval(checarMapa);
+                            sincronizarCarregamentoWeb(tempoLimiteSeguranca);
+                        } else if (tentativas > 40) { 
+                            clearInterval(checarMapa);
+                            liberarInterface();
+                        }
+                    }, 100);
+                }
+            });
+
+            function sincronizarCarregamentoWeb(timeoutId) {
+                let liberado = false;
+
+                function finalizarCarga() {
+                    if (liberado) return;
+                    liberado = true;
+                    clearTimeout(timeoutId);
+                    
+                    setTimeout(function() {
+                        liberarInterface();
+                    }, 300);
+                }
+
+                map.once('rendercomplete', function() {
+                    finalizarCarga();
+                });
+            }
+
+            function liberarInterface() {
+                const loader = document.getElementById('page-loader');
+                if (loader && loader.style.display !== 'none') {
+                    loader.style.opacity = '0';
+                    setTimeout(function() {
+                        loader.style.display = 'none';
+                    }, 500);
+                }
+            }
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Detecta se é um dispositivo móvel (ex: largura menor ou igual a 768px)
+                const isMobile = window.innerWidth <= 768;
+
+                if (isMobile) {
+                    // --- FLUXO PARA CELULAR: Remove o loader imediatamente e carrega direto ---
+                    const loader = document.getElementById('page-loader');
+                    if (loader) {
+                        loader.style.display = 'none';
+                    }
+                    // No celular, as camadas WFS já entram de forma adiada/leve sem prender a tela
+                    carregarCamadasWFSAdiadas();
+                    return; // Sai da função e não executa a lógica de desktop
+                }               
+            });
+
+         function carregarCamadasWFSAdiadas() {
+        // Usa requestIdleCallback se disponível, garantindo que o telemóvel 
+        // só processa as camadas quando a thread principal estiver ociosa e livre de toques.
+        const executarQuandoOcioso = window.requestIdleCallback || function(cb) { setTimeout(cb, 500); };
+
+        executarQuandoOcioso(function() {
+            // Dispara as camadas de forma intercalada e leve
+            const funcoesWFS = [
+                function() { if(typeof fetchWFSMunicipioscomaltopotencialenergticosolar_3Data === 'function') fetchWFSMunicipioscomaltopotencialenergticosolar_3Data("Municípios - Alto Potencial Energético", function(){}); },
+                function() { if(typeof fetchWFSLinhadetransmissoplanejado_11Data === 'function') fetchWFSLinhadetransmissoplanejado_11Data("Linha de Transmissão Planejada", function(){}); },
+                function() { if(typeof fetchWFSSubestaesExpansoPlanejada_12Data === 'function') fetchWFSSubestaesExpansoPlanejada_12Data("Subestações - Expansão Planejada", function(){}); },
+                function() { if(typeof fetchWFSSubestaesBaseExistente_13Data === 'function') fetchWFSSubestaesBaseExistente_13Data("Subestações - Base Existente", function(){}); },
+                function() { if(typeof fetchWFSLinhadetransmissaoexistente_14Data === 'function') fetchWFSLinhadetransmissaoexistente_14Data("Linha de Transmissão Existente", function(){}); },
+                function() { if(typeof fetchWFSCadastroAmbientalRuralCAR_16Data === 'function') fetchWFSCadastroAmbientalRuralCAR_16Data("Cadastro Ambiental Rural (CAR)", function(){}); },
+                function() { if(typeof fetchWFSSistemadeGestoFundiriaSIGEF_17Data === 'function') fetchWFSSistemadeGestoFundiriaSIGEF_17Data("Sistema de Gestão Fundiária (SIGEF)", function(){}); },
+                function() { if(typeof fetchWFSBiomasMAPBIOMAS_18Data === 'function') fetchWFSBiomasMAPBIOMAS_18Data("Biomas MapBiomas", function(){}); },
+                function() { if(typeof fetchWFSreasdeconservaoICMBio_20Data === 'function') fetchWFSreasdeconservaoICMBio_20Data("Áreas de Conservação", function(){}); },
+                function() { if(typeof fetchWFSRedeHidrogrficaANA_22Data === 'function') fetchWFSRedeHidrogrficaANA_22Data("Rede Hidrográfica ANA", function(){}); },
+                function() { if(typeof fetchWFSPiau_27Data === 'function') fetchWFSPiau_27Data("Piauí", function(){}); },
+                function() { if(typeof fetchWFSMunicpiosPiau_28Data === 'function') fetchWFSMunicpiosPiau_28Data("Municípios do Piauí", function(){}); },
+                function() { if(typeof fetchWFSBrasil_29Data === 'function') fetchWFSBrasil_29Data("Brasil", function(){}); }
+            ];
+
+            // Executa uma camada por ciclo de ociosidade para nunca travar o toque do utilizador
+            let i = 0;
+            function proximaCamada() {
+                if (i < funcoesWFS.length) {
+                    funcoesWFS[i]();
+                    i++;
+                    setTimeout(proximaCamada, 50); // Espaço de 300ms entre cada pedido WFS
+                }
+            }
+            proximaCamada();
+        }, { timeout: 3000 });
+    }
+        </script>
+    </body>
+</html>
