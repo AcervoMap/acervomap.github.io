@@ -1011,6 +1011,32 @@ td video {
     line-height: 1.4;
     margin-bottom: 12px;
 }
+#aviso-camada-toast{
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    background-color: rgba(27, 58, 65, 0.92);
+    color: #f8f9fa;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border-left: 3px solid #ffcc33;
+    font-size: 12px;
+    line-height: 1.35;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+    z-index: 99999;
+    max-width: 380px;
+    text-align: left;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+#aviso-hover-camada.visivel{
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    cursor: pointer;
+}
+
 .layer-options-dots {
     float: right;
     cursor: pointer;

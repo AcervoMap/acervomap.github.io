@@ -3297,7 +3297,4 @@ map.addControl(coordenadasMouse);
 
 
 
-//Voltar para LadingPage
-document.getElementById('btn-home').addEventListener('click', function() {
-    window.location.href = 'LandingPage.html';
-});
+

@@ -534,6 +534,7 @@ class LayerSwitcher extends Control {
             const ul = document.createElement('ul');
             li.appendChild(ul);
             LayerSwitcher.renderLayers_(map, lyr, ul, options, render);
+
         }
         else {
             li.className = 'layer';
@@ -592,9 +593,7 @@ class LayerSwitcher extends Control {
             (typeof lyr_GoogleHybrid_1 !== 'undefined' && lyr === lyr_GoogleHybrid_1) ||
             (typeof lyr_ESRITopo_2 !== 'undefined' && lyr === lyr_ESRITopo_2);
 
-            const isExternalLayer =
-                Boolean(lyr.get('isExternal')) ||
-                (typeof lyrTitle === 'string' && lyrTitle.trim().startsWith('INDE - '));
+            const isExternalLayer =Boolean(lyr.get('isExternal')) || (typeof lyrTitle === 'string' && lyrTitle.trim().startsWith('INDE - '));
 
             if (!isBaseLayer && !isExternalLayer) {
                 const menuDots = document.createElement('span');
@@ -616,6 +615,44 @@ class LayerSwitcher extends Control {
                 legendLi.innerHTML = legendaHtml;
                 legendUl.appendChild(legendLi);
                 li.appendChild(legendUl);
+            }
+
+            const avisoZoom = lyr.get('avisoZoom');
+            if (avisoZoom) {
+                li.title = avisoZoom;
+                label.title = avisoZoom;
+                input.title = avisoZoom;
+
+                input.addEventListener('change', function () {
+                    if (this.checked) {
+                        const zoomAtual = (map && typeof map.getView === 'function') ? map.getView().getZoom() : null;
+                        const zoomMinimo = (typeof lyr.getMinZoom === 'function' && lyr.getMinZoom() !== Infinity)
+                            ? lyr.getMinZoom()
+                            : lyr.get('minZoom');
+
+                        if (zoomAtual === null || zoomMinimo === undefined || zoomAtual < zoomMinimo) {
+                            mostrarAvisoCamada_(avisoZoom);
+                        }
+                    }
+                });
+            }
+
+            function mostrarAvisoCamada_(mensagem) {
+                let toast = document.getElementById('aviso-camada-toast');
+                if (!toast) {
+                    toast = document.createElement('div');
+                    toast.id = 'aviso-camada-toast';
+                   
+                    document.body.appendChild(toast);
+                }
+
+                toast.textContent = mensagem;
+                toast.style.display = 'block';
+
+                clearTimeout(toast._timer);
+                toast._timer = setTimeout(function () {
+                    toast.style.display = 'none';
+                }, 4500);
             }
         }
         return li;
